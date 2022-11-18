@@ -31,10 +31,46 @@ Exp_node * nodeConnect(Exp_node *parent, const char dest)
 
 }
 
-int nodeCtor(Exp_node **node)
+Exp_node * nodeCtor()
 {
-    *node = (Exp_node *)calloc(1, sizeof(Exp_node));
+    return (Exp_node *)calloc(1, sizeof(Exp_node));
+}
+
+Exp_node * copyNode(Exp_node * node)
+{
+    if (!node)
+        return nullptr;
+    
+    Exp_node *new_node = nodeCtor();
+
+    copyNodeData(node, new_node);
+
+    if (node->l_son)
+    {
+        new_node->l_son = copyNode(node->l_son);
+        new_node->l_son->parent = new_node;
+    }
+
+    if (node->r_son)
+    {
+        new_node->r_son = copyNode(node->r_son);
+        new_node->r_son->parent = new_node;
+    }
+
+    return new_node;
+
+}
+
+int copyNodeData(Exp_node *src_node, Exp_node *dest_node)
+{
+    if (src_node == nullptr || dest_node == nullptr)
+        return -1;
+
+    dest_node->type = src_node->type;
+    dest_node->value = src_node->value;
+
     return 0;
+
 }
 
 void printIn(const Exp_node * node)
@@ -53,13 +89,13 @@ void printIn(const Exp_node * node)
     switch(node->type)
     {
         case OP:
-            printf("%c", node->op_value);
+            printf("%c", node->value.op_value);
             break;
         case NUM:
-            printf("%g", node->dbl_value);
+            printf("%g", node->value.dbl_value);
             break;
         case VAR:
-            printf("%c", node->var_value);
+            printf("%c", node->value.var_value);
             break;
         default:
             printf("Блэт");

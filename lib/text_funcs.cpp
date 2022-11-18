@@ -44,7 +44,6 @@ int textCtor(Text_info * text, const char * file_name)
         return TEXT_ERROR_SOURCE_FILE_IS_NULL;         
     }  
 
-
     struct stat data = {};
     stat(file_name, &data);
     text->buf_length = data.st_size;

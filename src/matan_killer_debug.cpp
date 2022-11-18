@@ -18,13 +18,13 @@ int dumpExpNode(Exp_node * exp_node)
     switch(exp_node->type)
     {
         case OP:
-            printf("\nOPERATION (%c)\n", exp_node->op_value);
+            printf("\nOPERATION (%c)\n", exp_node->value.op_value);
             break;
         case NUM:
-            printf("\nNUMBER (%g)\n", exp_node->dbl_value);
+            printf("\nNUMBER (%g)\n", exp_node->value.dbl_value);
             break;
         case VAR:
-            printf("\nVARIABLE (%c)\n", exp_node->var_value);
+            printf("\nVARIABLE (%c)\n", exp_node->value.var_value);
             break;
         default:
             printf("\nБлэт не определился\n");
@@ -97,13 +97,13 @@ static int oper(const Exp_node * node)
     switch(node->type)
     {
         case OP:
-            sprintf(data, "\nOPERATION (%c)\n", node->op_value);
+            sprintf(data, "\nOPERATION (%c)\n", node->value.op_value);
             break;
         case NUM:
-            sprintf(data, "\nNUMBER (%g)\n", node->dbl_value);
+            sprintf(data, "\nNUMBER (%g)\n", node->value.dbl_value);
             break;
         case VAR:
-            sprintf(data, "\nVARIABLE (%c)\n", node->var_value);
+            sprintf(data, "\nVARIABLE (%c)\n", node->value.var_value);
             break;
         default:
             sprintf(data, "\nБлэт не определился\n");

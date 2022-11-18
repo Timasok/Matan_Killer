@@ -25,7 +25,6 @@ int getExpression(Text_info *text, Exp_node *main_node)
         readExpression(main_node, text->lines[0], 0, LEFT_SON);
     }
     
-
     return 0;
 }
 
@@ -94,7 +93,7 @@ int readExpression(Exp_node * exp_node, const char * input, size_t shift, int fr
     {
 
         Exp_node * new_node = nodeConnect(exp_node, free_port);
-        readExpression(new_node, input, shift + 1, free_port);
+        readExpression(new_node, input, shift + 1, free_port    );
 
     }else{
     
@@ -114,13 +113,13 @@ int parseTerminalNode(Exp_node *exp_node, const char * parsing_start, size_t par
     printf("input_segment =%s \nparsed_segment = %s\n", parsing_start, terminalValue);
 #endif
 
-    double dbl_value;
+    double value;
     char char_value = ' ';
     
-    if (sscanf(terminalValue, "%lf", &dbl_value) == 1)
+    if (sscanf(terminalValue, "%lf", &value) == 1)
     {
         exp_node->type = NUM;
-        exp_node->dbl_value = dbl_value;
+        exp_node->value.dbl_value = value;
         free(terminalValue);
         return 0;
     
@@ -132,36 +131,57 @@ int parseTerminalNode(Exp_node *exp_node, const char * parsing_start, size_t par
         if (isalpha(char_value))
         {
             exp_node->type = VAR;
-            exp_node->var_value = char_value;
+            exp_node->value.var_value = char_value;
             return 0;
 
         }else if(char_value == '+')
         {
             exp_node->type = OP;
-            exp_node->op_value = ADD;
+            exp_node->value.op_value = ADD;
             return 0;
 
         }else if(char_value == '-')
         {
             exp_node->type = OP;
-            exp_node->op_value = SUB;
+            exp_node->value.op_value = SUB;
             return 0;
 
         }else if(char_value == '*')
         {
             exp_node->type = OP;
-            exp_node->op_value = MUL;
+            exp_node->value.op_value = MUL;
             return 0;
 
         }else if(char_value == '\\')
         {
             exp_node->type = OP;
-            exp_node->op_value = DIV;
+            exp_node->value.op_value = DIV;
             return 0;
         }
 
     }
 
     return MATAN_KILLER_ERROR_CAN_NOT_PARSE_NODE;
+
+}
+
+Exp_node * differentiate(Exp_node *node)
+{
+    switch (node->type)
+    {
+        case NUM:
+            
+            break;
+        
+        default:
+            break;
+    }
+
+
+}
+
+Exp_node * copy(Exp_node *node)
+{
+    return NULL;
 
 }

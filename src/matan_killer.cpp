@@ -8,9 +8,8 @@
 
 int main()
 {
-    Exp_node * body = {};
-    nodeCtor(&body);
-
+    Exp_node * body = nodeCtor();
+    
     Text_info text = {};
     
     textCtor(&text, "expression.input");
@@ -18,12 +17,20 @@ int main()
     printText(&text);
 
     getExpression(&text, body);
-
     printIn(body->l_son);
     printf("\n");
 
-    treeDump(body);
+    Exp_node * copy_body = copyNode(body);
+    
+    treeDump(copy_body);
 
+    printIn(copy_body->l_son);
+    printf("\n");
+
+    nodeDtor(copy_body);
+    free(copy_body);
+
+    treeDump(body->l_son);
     nodeDtor(body);
     
     textDtor(&text);

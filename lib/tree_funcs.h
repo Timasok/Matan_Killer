@@ -38,6 +38,14 @@ enum Operator
 
 };
   
+union Value
+{
+    Operator op_value;
+    double dbl_value;
+    char var_value;
+
+};
+
 struct Exp_node
 {
 
@@ -47,15 +55,16 @@ struct Exp_node
 
     Node_type type = NUL;
 
-    Operator op_value;
-    double dbl_value;
-    char var_value;
-
+    Value value;
+    
 };
 
-Exp_node *  nodeConnect(Exp_node *parent, const char dest);
-int nodeCtor(Exp_node **node);
 Exp_node * nodeConnect(Exp_node *parent, const char dest);
+Exp_node * nodeCtor();
+Exp_node * createNode(Node_type type, Value value, Exp_node * left_son, Exp_node * right_son);
+
+Exp_node * copyNode(Exp_node * node);
+int copyNodeData(Exp_node *src_node, Exp_node *dest_node);
 
 Exp_node * findNode(Exp_node *node, const char *string);//TODO change completely this function do we need her?
 int nodeDtor(Exp_node *node);
