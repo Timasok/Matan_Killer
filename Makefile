@@ -1,7 +1,7 @@
 I_FLAG := -I./include/ -I./lib/stack/include/ -I./lib/ #-I./inc/
 
 CC:= g++
-CFLAGS := $(I_FLAG) -g -fsanitize=address # -Wall
+CFLAGS := $(I_FLAG) #-g -fsanitize=address # -Wall
 
 SRC_DIR := ./src/
 LIB_DIR := ./lib/

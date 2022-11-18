@@ -8,7 +8,8 @@
 Exp_node * nodeConnect(Exp_node *parent, const char dest)
 {
     assert(parent != NULL);
-    
+    // printf("\e[0;31mconnect_called to %p dest %d\e[0m\n", parent, dest);
+
     Exp_node * new_node = (Exp_node *)calloc(1, sizeof(Exp_node));
     
     switch(dest)
@@ -34,15 +35,15 @@ int nodeCtor(Exp_node **node)
 
 void printIn(const Exp_node * node)
 {
-    if (!node) 
-        return;
+    if (!node)
+        return;        
 
     printf("(");
 
     if (node->l_son)
     {
         printIn(node->l_son);
-        printf(")");
+
     }
 
     switch(node->type)
@@ -65,12 +66,51 @@ void printIn(const Exp_node * node)
     if (node->r_son)
     {
         printIn(node->r_son);
-        printf(")"); 
+
     }
 
+        printf(")");
     return;
 }
 
+int nodeDtor(Exp_node *node)
+{
+    if (!node)
+        return 0;
+
+    while(1)
+    {
+        // printf("\n\e[0;32mдолжны были зафришеть - \e[0m");
+        // dumpExpNode(node);
+        if (node->l_son == nullptr && node->r_son == nullptr)
+        {
+            if (node->parent == nullptr)
+                return 0;
+
+            if (node->parent->l_son == node)
+            {
+                node->parent->l_son = nullptr;
+                    
+            }
+            else if(node->parent->r_son == node)
+            {
+                node->parent->r_son = nullptr;
+            }
+
+            // printf("\n\e[0;31mзафришен - \e[0m");
+            // dumpExpNode(node);
+            free(node);
+            return 0;
+
+        }
+
+        nodeDtor(node->l_son);
+
+        nodeDtor(node->r_son);
+    }
+
+    return 0;
+}
 
 ////////////////////////////////////////////////////////////
 

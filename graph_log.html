@@ -1,0 +1,97 @@
+digraph MYG {
+rankdir = VR;
+graph [splines = ortho];
+bgcolor = "white";
+node [shape = "plaintext", style = "solid"];
+node1 [
+label=<
+<table border="0" cellborder="1" cellspacing="0">
+    <tr><td bgcolor="#dfdf91" port = "H1">NODE 1 = 0x561dd838c2a0</td></tr>
+    <tr><td bgcolor= "#5ca1cc"><font color="black"> junior </font></td></tr>
+    <tr>
+    <td>
+        <table border="0" cellborder="1">
+        <tr>
+            <td bgcolor = "#70de9f" port = "L1">  LEFT = 0x561dd838c6f0 </td>
+            <td bgcolor = "#e02828" port = "R1"> RIGHT = (nil) </td>
+        </tr> 
+        </table> 
+    </td>
+    </tr>
+</table>>
+]
+
+node2 [
+label=<
+<table border="0" cellborder="1" cellspacing="0">
+    <tr><td bgcolor="#dfdf91" port = "H2">NODE 2 = 0x561dd838c6f0</td></tr>
+    <tr><td bgcolor= "#5ca1cc"><font color="black"> junior </font></td></tr>
+    <tr>
+    <td>
+        <table border="0" cellborder="1">
+        <tr>
+            <td bgcolor = "#70de9f" port = "L2">  LEFT = 0x561dd838c730 </td>
+            <td bgcolor = "#e02828" port = "R2"> RIGHT = (nil) </td>
+        </tr> 
+        </table> 
+    </td>
+    </tr>
+</table>>
+]
+
+node1 -> node2:H2;node3 [
+label=<
+<table border="0" cellborder="1" cellspacing="0">
+    <tr><td bgcolor="#dfdf91" port = "H3">NODE 3 = 0x561dd838c730</td></tr>
+    <tr><td bgcolor= "#5ca1cc"><font color="black"> junior </font></td></tr>
+    <tr>
+    <td>
+        <table border="0" cellborder="1">
+        <tr>
+            <td bgcolor = "#70de9f" port = "L3">  LEFT = 0x561dd838c770 </td>
+            <td bgcolor = "#e02828" port = "R3"> RIGHT = 0x561dd838c7e0 </td>
+        </tr> 
+        </table> 
+    </td>
+    </tr>
+</table>>
+]
+
+node2 -> node3:H3;node4 [
+label=<
+<table border="0" cellborder="1" cellspacing="0">
+    <tr><td bgcolor="#dfdf91" port = "H4">NODE 4 = 0x561dd838c770</td></tr>
+    <tr><td bgcolor= "#5ca1cc"><font color="black"> junior </font></td></tr>
+    <tr>
+    <td>
+        <table border="0" cellborder="1">
+        <tr>
+            <td bgcolor = "#70de9f" port = "L4">  LEFT = (nil) </td>
+            <td bgcolor = "#e02828" port = "R4"> RIGHT = (nil) </td>
+        </tr> 
+        </table> 
+    </td>
+    </tr>
+</table>>
+]
+
+node3 -> node4:H4;node5 [
+label=<
+<table border="0" cellborder="1" cellspacing="0">
+    <tr><td bgcolor="#dfdf91" port = "H5">NODE 5 = 0x561dd838c7e0</td></tr>
+    <tr><td bgcolor= "#5ca1cc"><font color="black"> junior </font></td></tr>
+    <tr>
+    <td>
+        <table border="0" cellborder="1">
+        <tr>
+            <td bgcolor = "#70de9f" port = "L5">  LEFT = (nil) </td>
+            <td bgcolor = "#e02828" port = "R5"> RIGHT = (nil) </td>
+        </tr> 
+        </table> 
+    </td>
+    </tr>
+</table>>
+]
+
+node3 -> node5:H5;
+}

@@ -7,7 +7,7 @@
 #include "matan_killer_f.h"
 #include "matan_killer_debug.h"
 
-int getExpression(Exp_node **main_node)
+int getExpression(Exp_node *main_node)
 {
     char input[MAX_BUFFER_LENGTH] = {};
 
@@ -15,7 +15,11 @@ int getExpression(Exp_node **main_node)
     fprintf(stdin,"\n");
     scanf("%[^\n]s", input);
 
-    printf("look what we have here %s\n", input);
+    readExpression(main_node, input, 0, LEFT_SON);
+
+    // printf("look what we have here %s\n", input);
+    // parseTerminalNode(main_node->l_son, input, 1);
+    // dumpExpNode(main_node->l_son);
 
     return 0;
 }
@@ -28,10 +32,11 @@ int readExpression(Exp_node * exp_node, const char * input, size_t shift, int fr
     if (input == nullptr || shift == len)
         return 0;
 
+    // printf("\ninput = %s\n", &input[shift]);
+
     const char * open_bracket  = strchr(&input[shift], '(');
     const char * close_bracket = strchr(&input[shift], ')');
 
-    // printf("\nopen_bracket = %s close_bracket = %s", open_bracket, close_bracket);
     if (open_bracket == nullptr && close_bracket == nullptr)
     {
         readExpression(exp_node, input, len, RIGHT_SON);
@@ -54,12 +59,18 @@ int readExpression(Exp_node * exp_node, const char * input, size_t shift, int fr
 
     }
 
+    // printf("open_bracket = %s close_bracket = %s first_bracket = %s\n", open_bracket, close_bracket, first_bracket);
 
     size_t parsing_length = first_bracket - &input[shift];
+    
+    // printf("parsing_length = %lu free_port = %d\n", parsing_length, free_port);
 
-    if (first_bracket > input)
+    if (parsing_length > 0)
     {
         parseTerminalNode(exp_node, &input[shift], parsing_length);
+        // dumpExpNode(exp_node);
+
+        readExpression(exp_node, input, shift + parsing_length, free_port);
 
     } else if (&input[shift] == close_bracket)
     {
@@ -71,6 +82,9 @@ int readExpression(Exp_node * exp_node, const char * input, size_t shift, int fr
         Exp_node * new_node = nodeConnect(exp_node, free_port);
         readExpression(new_node, input, shift + 1, LEFT_SON);
 
+    }else{
+    
+        readExpression(exp_node, input, shift + 1, free_port);
     }
 
     return 0;
@@ -82,6 +96,8 @@ int parseTerminalNode(Exp_node *exp_node, const char * parsing_start, size_t par
     char * terminalValue = strdup(parsing_start);
     terminalValue[parsing_length] = '\0';
 
+    // printf("input_segment =%s \nparsed_segment = %s\n", parsing_start, terminalValue);
+    
     double dbl_value;
     char char_value = ' ';
     
@@ -89,16 +105,18 @@ int parseTerminalNode(Exp_node *exp_node, const char * parsing_start, size_t par
     {
         exp_node->type = NUM;
         exp_node->dbl_value = dbl_value;
+        free(terminalValue);
         return 0;
     
-    }else if(parsing_length == 1)
+    }else /*if(parsing_length == 1)*///TODO maybe add check in here
     {
-        sscanf(terminalValue, "%c", &char_value);
+        sscanf(terminalValue, " %c", &char_value);
+        free(terminalValue);
 
         if (isalpha(char_value))
         {
             exp_node->type = VAR;
-            exp_node->dbl_value = char_value;
+            exp_node->var_value = char_value;
             return 0;
 
         }else if(char_value == '+')

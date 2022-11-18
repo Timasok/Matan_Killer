@@ -1,24 +1,24 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "tree_funcs.h"
+#include "matan_killer_f.h"
+#include "matan_killer_debug.h"
 
 int main()
 {
-    Exp_node * plus = {};
-    nodeCtor(&plus);
-    Exp_node * var_x = nodeConnect(plus, LEFT_SON);
-    Exp_node * num_47 = nodeConnect(plus, RIGHT_SON);
+    Exp_node * body = {};
+    nodeCtor(&body);
 
-    plus->type   = OP;
-    plus->op_value = ADD;
+    getExpression(body);
 
-    var_x->type      = VAR;
-    var_x->var_value = 'x';
+    printIn(body->l_son);
+    printf("\n");
 
-    num_47->type = NUM;
-    num_47->dbl_value = 47.0;
+    treeDump(body);
 
-    printIn(plus);
+    nodeDtor(body);
+    free(body);
 
     return 0;
 }
