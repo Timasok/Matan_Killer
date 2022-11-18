@@ -4,11 +4,15 @@
 #include <assert.h>
 
 #include "tree_funcs.h"
+#include "matan_killer_debug.h"
 
 Exp_node * nodeConnect(Exp_node *parent, const char dest)
 {
     assert(parent != NULL);
-    // printf("\e[0;31mconnect_called to %p dest %d\e[0m\n", parent, dest);
+
+#ifdef DEBUG
+    printf("\e[0;31mconnect_called to %p dest %d\e[0m\n", parent, dest);
+#endif
 
     Exp_node * new_node = (Exp_node *)calloc(1, sizeof(Exp_node));
     
@@ -80,8 +84,11 @@ int nodeDtor(Exp_node *node)
 
     while(1)
     {
-        // printf("\n\e[0;32mдолжны были зафришеть - \e[0m");
-        // dumpExpNode(node);
+    #ifdef DEBUG
+        printf("\n\e[0;32mдолжны были зафришеть - \e[0m");
+        dumpExpNode(node);
+    #endif
+
         if (node->l_son == nullptr && node->r_son == nullptr)
         {
             if (node->parent == nullptr)
@@ -97,8 +104,11 @@ int nodeDtor(Exp_node *node)
                 node->parent->r_son = nullptr;
             }
 
-            // printf("\n\e[0;31mзафришен - \e[0m");
-            // dumpExpNode(node);
+        #ifdef DEBUG
+            printf("\n\e[0;31mзафришен - \e[0m");
+            dumpExpNode(node);
+        #endif
+        
             free(node);
             return 0;
 

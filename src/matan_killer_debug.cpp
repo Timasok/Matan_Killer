@@ -91,10 +91,30 @@ int findNext(const Exp_node* node, int (*oper)(const Exp_node *))
 
 static int oper(const Exp_node * node)
 {
+
+    char data[MAX_BUFFER_LENGTH] = {};
+
+    switch(node->type)
+    {
+        case OP:
+            sprintf(data, "\nOPERATION (%c)\n", node->op_value);
+            break;
+        case NUM:
+            sprintf(data, "\nNUMBER (%g)\n", node->dbl_value);
+            break;
+        case VAR:
+            sprintf(data, "\nVARIABLE (%c)\n", node->var_value);
+            break;
+        default:
+            sprintf(data, "\nБлэт не определился\n");
+            break;
+
+    }
+
     PRINT_DOT(  "node%d [\n" "label=<\n"
                 "<table border=\"0\" cellborder=\"1\" cellspacing=\"0\">\n"
                 "    <tr><td bgcolor=\"#dfdf91\" port = \"H%d\">NODE %d = %p</td></tr>\n"
-                "    <tr><td bgcolor= \"#5ca1cc\"><font color=\"black\"> junior </font></td></tr>\n"
+                "    <tr><td bgcolor= \"#5ca1cc\"><font color=\"black\"> %s </font></td></tr>\n"
                 
                 "    <tr>\n"
                 "    <td>\n"
@@ -116,7 +136,7 @@ static int oper(const Exp_node * node)
                 "    </tr>\n" 
                 
                 "</table>>\n"
-                "]\n\n", nodeNumber, nodeNumber, nodeNumber, node, nodeNumber, node->l_son, nodeNumber, node->r_son);
+                "]\n\n", nodeNumber, nodeNumber, nodeNumber, node, data, nodeNumber, node->l_son, nodeNumber, node->r_son);
     
     //There is no use yet to decide which port from the parent we should connect to his son GRAPHVIZ does it! 
     // const char output_port = 0;
@@ -143,7 +163,7 @@ int makeDot(Exp_node *exp_node)
     findNext(exp_node, *oper);
     // oper(exp_node->main_node);
 
-     PRINT_DOT("\n}");
+    PRINT_DOT("\n}");
 
     fclose(graph_log);
 

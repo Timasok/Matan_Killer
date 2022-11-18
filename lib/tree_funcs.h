@@ -1,6 +1,8 @@
 #ifndef TREE_FUNCS_H
 #define TREE_FUNCS_H
 
+// #define DEBUG 47
+
 const int MAX_BUFFER_LENGTH = 512;
 
 struct Node
