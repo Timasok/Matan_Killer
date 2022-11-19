@@ -6,6 +6,7 @@
 
 #include "matan_killer_f.h"
 #include "matan_killer_debug.h"
+#include "dsl.h"
 
 static Exp_node * createNum(int number)
 {
@@ -147,7 +148,7 @@ int parseTerminalNode(Exp_node *exp_node, const char * parsing_start, size_t par
             exp_node->type = VAR;
             exp_node->value.var_value = char_value;
             return 0;
-
+//TODO make more compact
         }else if(char_value == '+')
         {
             exp_node->type = OP;
@@ -170,6 +171,12 @@ int parseTerminalNode(Exp_node *exp_node, const char * parsing_start, size_t par
         {
             exp_node->type = OP;
             exp_node->value.op_value = DIV;
+            return 0;
+        
+        }else if(char_value == '^')
+        {
+            exp_node->type = OP;
+            exp_node->value.op_value = POW;
             return 0;
         }
 
@@ -202,23 +209,40 @@ Exp_node * differentiate(const Exp_node *node)
                     break;
                 
                 case MUL:
-                   
-                    new_node->type = OP;
-                    new_node->value.op_value = ADD;
+                
+                    makeOp(ADD);
+                    
+                    leftOp(MUL);
+                    dL(LEFT_SON);
+                    cL(RIGHT_SON);
 
-                    new_node->l_son = createOp(MUL);
-                    linkToParent(new_node, new_node->l_son);
-
-                    diffNode(node, new_node->l_son, LEFT_SON);
-                    copyNode(node, new_node->l_son, RIGHT_SON);
-
-                    new_node->r_son = createOp(MUL);
-                    linkToParent(new_node, new_node->r_son);                  
-
-                    diffNode(node, new_node->r_son, RIGHT_SON);
-                    copyNode(node, new_node->r_son, LEFT_SON);
+                    rightOp(MUL);
+                    dR(RIGHT_SON);
+                    cR(LEFT_SON);
 
                     return new_node;
+                    break;
+
+                //without dsl
+                    // new_node->type = OP;
+                    // new_node->value.op_value = ADD;
+
+                    // new_node->l_son = createOp(MUL);
+                    // linkToParent(new_node, new_node->l_son);
+
+                    // diffNode(node, new_node->l_son, LEFT_SON);
+                    // copyNode(node, new_node->l_son, RIGHT_SON);
+
+                    // new_node->r_son = createOp(MUL);
+                    // linkToParent(new_node, new_node->r_son);                  
+
+                    // diffNode(node, new_node->r_son, RIGHT_SON);
+                    // copyNode(node, new_node->r_son, LEFT_SON);
+                    // return new_node;
+                    // break;
+
+                case POW:
+                case DIV:
                     break;
 
                 default:

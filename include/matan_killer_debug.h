@@ -9,6 +9,8 @@
 
 #define PRINT_ERROR(error_specifier)                                        \
         fprintf(log, "%s", #error_specifier);
+        
+#define DBG_OUT fprintf(stderr, "file: %s func: %s line: %d\n", __FILE__, __FUNCTION__, __LINE__)
 
 int dumpExpNode(Exp_node * exp_node);
 

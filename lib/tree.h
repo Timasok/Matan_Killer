@@ -35,6 +35,7 @@ enum Operator
     SUB = '-',
     MUL = '*',
     DIV = '\\',
+    POW = '^',
 
 };
   
