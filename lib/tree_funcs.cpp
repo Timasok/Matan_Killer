@@ -3,8 +3,8 @@
 #include <string.h>
 #include <assert.h>
 
-#include "tree_funcs.h"
-#include "matan_killer_debug.h"
+#include "tree.h"
+#include "matan_killer_debug.h"//TODO debuger is external
 
 Exp_node * nodeConnect(Exp_node *parent, const char dest)
 {
@@ -57,11 +57,12 @@ Exp_node * copyNode(Exp_node * node)
         new_node->r_son->parent = new_node;
     }
 
+    dumpExpNode(new_node);
     return new_node;
 
 }
 
-int copyNodeData(Exp_node *src_node, Exp_node *dest_node)
+int copyNodeData(const Exp_node *src_node, Exp_node *dest_node)
 {
     if (src_node == nullptr || dest_node == nullptr)
         return -1;
@@ -70,6 +71,27 @@ int copyNodeData(Exp_node *src_node, Exp_node *dest_node)
     dest_node->value = src_node->value;
 
     return 0;
+
+}
+
+//TODO add assert or something
+Exp_node * createNode(Node_type type, Value value, Exp_node * l_son, Exp_node * r_son)
+{
+    int error_code = 0;
+    PARSE_ERROR(error_code, type == NUL, MATAN_KILLER_ERROR_INVALID_TYPE);
+    // PARSE_ERROR(error_code, !value, MATAN_KILLER_ERROR_INVALID_VALUE);
+
+    if (error_code != 0)
+        return nullptr;
+
+    Exp_node * new_node = nodeCtor(); 
+
+    new_node->type = type;
+    new_node->value = value;
+    new_node->l_son = l_son;
+    new_node->r_son = r_son;
+
+    return new_node;
 
 }
 

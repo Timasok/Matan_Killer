@@ -4,8 +4,8 @@
 #define DEF_ERR(name, num) \
             MATAN_KILLER_ERROR_##name = 1 << num,
 
-#define PARSE_ERROR(treePtr, condition, error_specifier)                    \
-        listPtr->code_of_error  |= ((condition) & error_specifier);
+#define PARSE_ERROR(error_code, condition, error_specifier)                    \
+                error_code |= ((condition) & error_specifier);
 
 #define PRINT_ERROR(error_specifier)                                        \
         fprintf(log, "%s", #error_specifier);

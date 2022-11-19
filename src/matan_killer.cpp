@@ -2,13 +2,13 @@
 #include <stdlib.h>
 
 #include "text_funcs.h"
-#include "tree_funcs.h"
+#include "tree.h"
 #include "matan_killer_f.h"
 #include "matan_killer_debug.h"
 
 int main()
 {
-    Exp_node * body = nodeCtor();
+    Exp_node * func = nodeCtor();
     
     Text_info text = {};
     
@@ -16,25 +16,25 @@ int main()
 
     printText(&text);
 
-    getExpression(&text, body);
-    printIn(body->l_son);
+    getExpression(&text, func);
+    printIn(func->l_son);
     printf("\n");
 
-    Exp_node * copy_body = copyNode(body);
+    Exp_node * diff_func = differentiate(func->l_son);
     
-    treeDump(copy_body);
+    treeDump(diff_func);
 
-    printIn(copy_body->l_son);
+    printIn(diff_func);
     printf("\n");
 
-    nodeDtor(copy_body);
-    free(copy_body);
+    nodeDtor(diff_func);
+    free(diff_func);
 
-    treeDump(body->l_son);
-    nodeDtor(body);
+    treeDump(func->l_son);
+    nodeDtor(func);
     
     textDtor(&text);
-    free(body);
+    free(func);
 
     return 0;
 }

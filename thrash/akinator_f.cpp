@@ -5,7 +5,7 @@
 
 #include "akinator_modes.h"
 #include "akinator_debug.h"
-#include "tree_funcs.h"
+#include "tree.h"
 
 static FILE *base = nullptr;
 static int nodeNumber = 0;

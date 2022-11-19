@@ -7,6 +7,13 @@
 #include "matan_killer_f.h"
 #include "matan_killer_debug.h"
 
+static Exp_node * createNum(int number)
+{
+    Value val = {};
+    val.dbl_value = number;
+    return createNode(NUM, val, nullptr, nullptr);
+}
+
 int getExpression(Text_info *text, Exp_node *main_node)
 {
     if (text->buf == nullptr)
@@ -165,22 +172,40 @@ int parseTerminalNode(Exp_node *exp_node, const char * parsing_start, size_t par
 
 }
 
-Exp_node * differentiate(Exp_node *node)
+Exp_node * differentiate(const Exp_node *node)
 {
     switch (node->type)
     {
         case NUM:
-            
+            return createNum(0);
             break;
-        
-        default:
+        case VAR:
+            return createNum(1);
+            break;
+        case OP:
+            Exp_node * new_node = nodeCtor();
+            switch(node->value.op_value)
+            {
+                case ADD:
+                case SUB:
+                    new_node->l_son = differentiate(node->l_son);
+                    new_node->l_son->parent = new_node;
+                    new_node->r_son = differentiate(node->r_son);
+                    new_node->r_son->parent = new_node;
+                    copyNodeData(node, new_node);
+                    return new_node;
+                    break;
+                default:
+                    printf("go f smbdy");
+                    break;
+            }
             break;
     }
 
-
+    return nullptr;
 }
 
-Exp_node * copy(Exp_node *node)
+Exp_node * copySingle(Exp_node *node)
 {
     return NULL;
 

@@ -61,10 +61,10 @@ struct Exp_node
 
 Exp_node * nodeConnect(Exp_node *parent, const char dest);
 Exp_node * nodeCtor();
-Exp_node * createNode(Node_type type, Value value, Exp_node * left_son, Exp_node * right_son);
+Exp_node * createNode(Node_type type, Value value, Exp_node * l_son, Exp_node * r_son);
 
 Exp_node * copyNode(Exp_node * node);
-int copyNodeData(Exp_node *src_node, Exp_node *dest_node);
+int copyNodeData(const Exp_node *src_node, Exp_node *dest_node);
 
 Exp_node * findNode(Exp_node *node, const char *string);//TODO change completely this function do we need her?
 int nodeDtor(Exp_node *node);
@@ -72,6 +72,10 @@ int nodeDtor(Exp_node *node);
 void printPre(const Exp_node * node);
 void printIn(const Exp_node * node);
 void printPost(const Exp_node * node);
+
+///////////////////////////////////////////////////////////////
+
+int verifyTree(const Exp_node *node);
 
 ///////////////////////////////////////////////////////////////
 
