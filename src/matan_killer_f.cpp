@@ -14,6 +14,13 @@ static Exp_node * createNum(int number)
     return createNode(NUM, val, nullptr, nullptr);
 }
 
+static Exp_node * createOp(Operator op)
+{
+    Value val = {};
+    val.op_value = op;
+    return createNode(OP, val, nullptr, nullptr);
+}
+
 int getExpression(Text_info *text, Exp_node *main_node)
 {
     if (text->buf == nullptr)
@@ -188,13 +195,32 @@ Exp_node * differentiate(const Exp_node *node)
             {
                 case ADD:
                 case SUB:
-                    new_node->l_son = differentiate(node->l_son);
-                    new_node->l_son->parent = new_node;
-                    new_node->r_son = differentiate(node->r_son);
-                    new_node->r_son->parent = new_node;
+                    diffNode(node, new_node, LEFT_SON);
+                    diffNode(node, new_node, RIGHT_SON);
                     copyNodeData(node, new_node);
                     return new_node;
                     break;
+                
+                case MUL:
+                   
+                    new_node->type = OP;
+                    new_node->value.op_value = ADD;
+
+                    new_node->l_son = createOp(MUL);
+                    linkToParent(new_node, new_node->l_son);
+
+                    diffNode(node, new_node->l_son, LEFT_SON);
+                    copyNode(node, new_node->l_son, RIGHT_SON);
+
+                    new_node->r_son = createOp(MUL);
+                    linkToParent(new_node, new_node->r_son);                  
+
+                    diffNode(node, new_node->r_son, RIGHT_SON);
+                    copyNode(node, new_node->r_son, LEFT_SON);
+
+                    return new_node;
+                    break;
+
                 default:
                     printf("go f smbdy");
                     break;
@@ -205,8 +231,43 @@ Exp_node * differentiate(const Exp_node *node)
     return nullptr;
 }
 
-Exp_node * copySingle(Exp_node *node)
+int diffNode(const Exp_node *argument, Exp_node * result, const char dest)
 {
-    return NULL;
+    switch (dest)
+    {
+        case LEFT_SON:
+            result->l_son = differentiate(argument->l_son);
+            result->l_son->parent = result;
+            break;
+        case RIGHT_SON:
+            result->r_son = differentiate(argument->r_son);
+            result->r_son->parent = result;
+            break;
+        default:
+            return MATAN_KILLER_ERROR_INCORRECT_DESTINATION_PORT;
+            break;
+    }
+
+    return 0;
+}
+
+int copyNode(const Exp_node *argument, Exp_node * result, const char dest)
+{
+    switch (dest)
+    {
+        case LEFT_SON:
+            result->l_son = copy(argument->l_son);
+            result->l_son->parent = result;
+            break;
+        case RIGHT_SON:
+            result->r_son = copy(argument->r_son);
+            result->r_son->parent = result;
+            break;
+        default:
+            return MATAN_KILLER_ERROR_INCORRECT_DESTINATION_PORT;
+            break;
+    }
+
+    return 0;
 
 }

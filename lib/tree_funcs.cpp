@@ -36,7 +36,7 @@ Exp_node * nodeCtor()
     return (Exp_node *)calloc(1, sizeof(Exp_node));
 }
 
-Exp_node * copyNode(Exp_node * node)
+Exp_node * copy(Exp_node * node)
 {
     if (!node)
         return nullptr;
@@ -47,17 +47,20 @@ Exp_node * copyNode(Exp_node * node)
 
     if (node->l_son)
     {
-        new_node->l_son = copyNode(node->l_son);
+        new_node->l_son = copy(node->l_son);
         new_node->l_son->parent = new_node;
     }
 
     if (node->r_son)
     {
-        new_node->r_son = copyNode(node->r_son);
+        new_node->r_son = copy(node->r_son);
         new_node->r_son->parent = new_node;
     }
 
+#ifdef DEBUG
     dumpExpNode(new_node);
+#endif
+
     return new_node;
 
 }
@@ -92,6 +95,16 @@ Exp_node * createNode(Node_type type, Value value, Exp_node * l_son, Exp_node * 
     new_node->r_son = r_son;
 
     return new_node;
+
+}
+
+int linkToParent(Exp_node *parent, Exp_node *orphan)
+{
+    if (parent == nullptr || orphan == nullptr)
+        return -1;
+
+    orphan->parent = parent;
+    return 0;
 
 }
 

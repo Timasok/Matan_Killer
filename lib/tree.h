@@ -63,7 +63,9 @@ Exp_node * nodeConnect(Exp_node *parent, const char dest);
 Exp_node * nodeCtor();
 Exp_node * createNode(Node_type type, Value value, Exp_node * l_son, Exp_node * r_son);
 
-Exp_node * copyNode(Exp_node * node);
+int linkToParent(Exp_node *parent, Exp_node *orphan);
+
+Exp_node * copy(Exp_node * node);
 int copyNodeData(const Exp_node *src_node, Exp_node *dest_node);
 
 Exp_node * findNode(Exp_node *node, const char *string);//TODO change completely this function do we need her?
