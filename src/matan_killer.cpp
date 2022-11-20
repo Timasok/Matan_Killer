@@ -19,6 +19,7 @@ int main()
     getExpression(&text, func);
     printIn(func->l_son);
     printf("\n");
+    treeDump(func->l_son);
 
     Exp_node * diff_func = differentiate(func->l_son);
     
@@ -30,7 +31,6 @@ int main()
     nodeDtor(diff_func);
     free(diff_func);
 
-    treeDump(func->l_son);
     nodeDtor(func);
     
     textDtor(&text);

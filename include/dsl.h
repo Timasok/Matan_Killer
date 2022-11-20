@@ -33,6 +33,17 @@
                                                                     \
         } while(0)                                                  \
 
+#define cRR(linking_side, src_side)                                                                 \
+        do{                                                                                         \
+            copyNode(node, new_node->r_son->r_son, linking_side, src_side);                         \
+                                                                                                    \
+        } while(0)                                                                                  \
+
+#define cRRR(linking_side, src_side)                                                                \
+        do{                                                                                         \
+            copyNode(node, new_node->r_son->r_son->r_son, linking_side, src_side);                  \
+                                                                                                    \
+        } while(0)                                                                                  \
 
 #define copyOp()                                                \
         do{                                                     \
@@ -50,6 +61,20 @@
             new_node->l_son = createOp(operation);              \
             linkToParent(new_node, new_node->l_son);            \
         } while(0)                                               
+
+
+//TODO add assert that checks if we don't work with deep nodes unless we difine the upper ones
+#define right_right_Op(operation)                               \
+        do{                                                     \
+            new_node->r_son->r_son = createOp(operation);       \
+            linkToParent(new_node->r_son, new_node->r_son->r_son);     \
+        } while(0)
+
+#define right_right_right_Op(operation)                             \
+        do{                                                         \
+            new_node->r_son->r_son->r_son = createOp(operation);    \
+            linkToParent(new_node->r_son->r_son, new_node->r_son->r_son->r_son);  \
+        } while(0)    
 
 #define rightOp(operation)                                      \
         do{                                                     \

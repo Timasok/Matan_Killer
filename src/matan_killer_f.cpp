@@ -202,9 +202,12 @@ Exp_node * differentiate(const Exp_node *node)
             {
                 case ADD:
                 case SUB:
-                    diffNode(node, new_node, LEFT_SON, LEFT_SON);
-                    diffNode(node, new_node, RIGHT_SON, RIGHT_SON);
-                    copyNodeData(node, new_node);
+
+                    d(LEFT_SON, LEFT_SON);
+                    d(RIGHT_SON, RIGHT_SON);
+
+                    copyOp();
+
                     return new_node;
                     break;
                 
@@ -213,35 +216,44 @@ Exp_node * differentiate(const Exp_node *node)
                     makeOp(ADD);
                     
                     leftOp(MUL);
-                    dL(LEFT_SON);
-                    cL(RIGHT_SON);
+                    dL(LEFT_SON, LEFT_SON);
+                    cL(RIGHT_SON, RIGHT_SON);
 
                     rightOp(MUL);
-                    dR(RIGHT_SON);
-                    cR(LEFT_SON);
+                    dR(LEFT_SON, LEFT_SON);
+                    cR(RIGHT_SON, RIGHT_SON);
 
                     return new_node;
                     break;
 
-                //without dsl
-                    // new_node->type = OP;
-                    // new_node->value.op_value = ADD;
-
-                    // new_node->l_son = createOp(MUL);
-                    // linkToParent(new_node, new_node->l_son);
-
-                    // diffNode(node, new_node->l_son, LEFT_SON);
-                    // copyNode(node, new_node->l_son, RIGHT_SON);
-
-                    // new_node->r_son = createOp(MUL);
-                    // linkToParent(new_node, new_node->r_son);                  
-
-                    // diffNode(node, new_node->r_son, RIGHT_SON);
-                    // copyNode(node, new_node->r_son, LEFT_SON);
-                    // return new_node;
-                    // break;
-
                 case POW:
+
+                    makeOp(MUL);
+
+                //creating first level
+                    d(LEFT_SON, LEFT_SON);
+                    
+                    rightOp(MUL);
+
+                //second level
+
+                    cR(LEFT_SON, RIGHT_SON);
+                    right_right_Op(POW);
+
+                //third level
+
+                    cRR(LEFT_SON, LEFT_SON);
+                    right_right_right_Op(SUB);       
+
+                //fourth level
+
+                    cRRR(LEFT_SON, RIGHT_SON);
+                    new_node->r_son->r_son->r_son->r_son = createNum(1);
+                    linkSonsToParent(new_node->r_son->r_son->r_son);
+
+                    return new_node;
+                    break;
+
                 case DIV:
                     break;
 
