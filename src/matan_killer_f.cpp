@@ -118,6 +118,27 @@ int readExpression(Exp_node * exp_node, const char * input, size_t shift, int fr
     return 0;
 }
 
+#define DEF_OP(op_name, op_code)                                    \
+     else if(symbol == op_code)                                     \
+    {                                                               \
+        result = op_name;                                           \
+    }                                                               \
+
+Operator isOp(int symbol)
+{
+    Operator result = NOT_OP;
+
+    if (0)
+    {
+
+    }
+    #include "operations.h"    
+
+    return result;
+}
+
+#undef DEF_OP
+
 int parseTerminalNode(Exp_node *exp_node, const char * parsing_start, size_t parsing_length)
 {
 
@@ -143,41 +164,20 @@ int parseTerminalNode(Exp_node *exp_node, const char * parsing_start, size_t par
         sscanf(terminalValue, " %c", &char_value);
         free(terminalValue);
 
-        if (isalpha(char_value))
+        Operator op = isOp(char_value);
+
+        if (op != NOT_OP)
+        {
+            exp_node->type = OP;
+            exp_node->value.op_value = op;
+            return 0;
+
+        }else if (isalpha(char_value))
         {
             exp_node->type = VAR;
             exp_node->value.var_value = char_value;
             return 0;
-//TODO make more compact
-        }else if(char_value == '+')
-        {
-            exp_node->type = OP;
-            exp_node->value.op_value = ADD;
-            return 0;
 
-        }else if(char_value == '-')
-        {
-            exp_node->type = OP;
-            exp_node->value.op_value = SUB;
-            return 0;
-
-        }else if(char_value == '*')
-        {
-            exp_node->type = OP;
-            exp_node->value.op_value = MUL;
-            return 0;
-
-        }else if(char_value == '/')
-        {
-            exp_node->type = OP;
-            exp_node->value.op_value = DIV;
-            return 0;
-        
-        }else if(char_value == '^')
-        {
-            exp_node->type = OP;
-            exp_node->value.op_value = POW;
-            return 0;
         }
 
     }
@@ -188,16 +188,24 @@ int parseTerminalNode(Exp_node *exp_node, const char * parsing_start, size_t par
 
 Exp_node * differentiate(const Exp_node *node)
 {
+    Exp_node * new_node;
+
     switch (node->type)
     {
         case NUM:
-            return createNum(0);
+        {
+            new_node = createNum(0);
+
             break;
+        }
         case VAR:
-            return createNum(1);
+        {
+            new_node = createNum(1);
+
             break;
+        }
         case OP:
-            Exp_node * new_node = nodeCtor();
+            new_node = nodeCtor();
             switch(node->value.op_value)
             {
                 case ADD:
@@ -209,7 +217,6 @@ Exp_node * differentiate(const Exp_node *node)
 
                     copyOp();
 
-                    return new_node;
                     break;
 
                 }
@@ -223,14 +230,13 @@ Exp_node * differentiate(const Exp_node *node)
                     rightOp(MUL);
                     
                 //second level
-                
+
                     dL(LEFT_SON, LEFT_SON);
                     cL(RIGHT_SON, RIGHT_SON);
                     
                     dR(RIGHT_SON, RIGHT_SON);
                     cR(LEFT_SON, LEFT_SON);
 
-                    return new_node;
                     break;
 
                 }
@@ -285,8 +291,7 @@ Exp_node * differentiate(const Exp_node *node)
                     //     cRR()
 
                     }
-                    
-                    return new_node;
+
                     break;
                 }
                 case DIV:
@@ -314,8 +319,39 @@ Exp_node * differentiate(const Exp_node *node)
 
                     dLR(LEFT_SON, RIGHT_SON);
                     cLR(RIGHT_SON, LEFT_SON);
+                    
+                    break;
+                }
+                case SIN:
+                {
+                    makeOp(MUL);
 
-                    return new_node;
+                //creating first level
+                    d(RIGHT_SON, RIGHT_SON);
+                    leftOp(COS);
+
+                //second level
+
+                    new_node->l_son->l_son = createNum(0);
+                    linkSonsToParent(new_node->l_son);
+                    cL(RIGHT_SON, RIGHT_SON);
+
+                    break;
+                }
+                case COS:
+                {
+                //     makeOp(MUL);
+
+                // //creating first level
+                //     d(RIGHT_SON, RIGHT_SON);
+                //     leftOp(COS);
+
+                // //second level
+
+                //     new_node->l_son->l_son = createNum(0);
+                //     linkSonsToParent(new_node->l_son);
+                //     cL(RIGHT_SON, RIGHT_SON);
+
                     break;
                 }
                 default:
@@ -325,7 +361,10 @@ Exp_node * differentiate(const Exp_node *node)
             break;
     }
 
-    return nullptr;
+    #ifdef DEBUG
+        dumpExpNode(new_node);
+    #endif
+    return new_node;
 }
 
 int diffNode(const Exp_node *argument, Exp_node * result, const char linking_side_in_copy, const char src_side)

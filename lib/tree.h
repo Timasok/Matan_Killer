@@ -29,16 +29,17 @@ enum Node_type
 
 };
 
+#define DEF_OP(op_name, op_code)                            \
+    op_name = op_code,                                      \
+
 enum Operator
 {
-    ADD = '+',
-    SUB = '-',
-    MUL = '*',
-    DIV = '/',
-    POW = '^',
+    #include "operations.h"
 
 };
   
+#undef DEF_OP
+
 union Value
 {
     Operator op_value;

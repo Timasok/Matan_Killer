@@ -22,6 +22,7 @@ int main()
     treeDump(func->l_son);
 
     Exp_node * diff_func = differentiate(func->l_son);
+    // Exp_node * diff_func = copy(func->l_son);
     
     treeDump(diff_func);
 

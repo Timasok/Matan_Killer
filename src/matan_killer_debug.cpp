@@ -14,6 +14,8 @@ static int prevNumber = 0;
 
 int dumpExpNode(Exp_node * exp_node)
 {
+    if (!exp_node)
+        return -1;
 
     switch(exp_node->type)
     {

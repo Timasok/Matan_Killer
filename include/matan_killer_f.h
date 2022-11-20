@@ -4,6 +4,8 @@
 #include "tree.h"
 #include "text_funcs.h"
 
+Operator isOp(int symbol);
+
 int getExpression(Text_info *text, Exp_node *main_node);
 
 int readExpression(Exp_node *exp_node, const char * remainder, size_t shift, int free_port);
