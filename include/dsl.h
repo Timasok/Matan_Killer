@@ -1,71 +1,43 @@
-
-#define dL(side)                                                    \
+//differentiated node will be linked with the main operation in new tree
+#define d(linking_side, src_side)                                   \
         do{                                                         \
-            switch(side)                                            \
-            {                                                       \
-                case LEFT_SON:                                      \
-                    diffNode(node, new_node->l_son, LEFT_SON, LEFT_SON);      \
-                    break;                                          \
-                case RIGHT_SON:                                     \
-                    diffNode(node, new_node->l_son, RIGHT_SON, RIGHT_SON);     \
-                    break;                                          \
-                default:                                            \
-                    printf("WRONG SIDE ");                          \
-                    DBG_OUT;                                        \
-                    break;                                          \
-            }                                                       \
+            diffNode(node, new_node, linking_side, src_side);       \
+                                                                    \
+        } while(0)    
+
+//differentiated node will be linked with the left operation in new tree
+#define dL(linking_side, src_side)                                  \
+        do{                                                         \
+            diffNode(node, new_node->l_son, linking_side, src_side);\
+                                                                    \
         } while(0)                                                  \
 
-#define cL(side)                                                    \
+//copied node will be linked with the left operation in new tree
+#define cL(linking_side, src_side)                                  \
         do{                                                         \
-            switch(side)                                            \
-            {                                                       \
-                case LEFT_SON:                                      \
-                    copyNode(node, new_node->l_son, LEFT_SON, LEFT_SON);      \
-                    break;                                          \
-                case RIGHT_SON:                                     \
-                    copyNode(node, new_node->l_son, RIGHT_SON, RIGHT_SON);     \
-                    break;                                          \
-                default:                                            \
-                    printf("WRONG SIDE ");                          \
-                    DBG_OUT;                                        \
-                    break;                                          \
-            }                                                       \
+            copyNode(node, new_node->l_son, linking_side, src_side);\
+                                                                    \
         } while(0)                                                  \
 
-#define dR(side)                                                    \
+//differentiated node will be linked with the right operation in new tree
+#define dR(linking_side, src_side)                                  \
         do{                                                         \
-            switch(side)                                            \
-            {                                                       \
-                case LEFT_SON:                                      \
-                    diffNode(node, new_node->r_son, LEFT_SON, LEFT_SON);      \
-                    break;                                          \
-                case RIGHT_SON:                                     \
-                    diffNode(node, new_node->r_son, RIGHT_SON, RIGHT_SON);     \
-                    break;                                          \
-                default:                                            \
-                    printf("WRONG SIDE ");                          \
-                    DBG_OUT;                                        \
-                    break;                                          \
-            }                                                       \
-        } while(0)
-
-#define cR(side)                                                    \
-        do{                                                         \
-            switch(side)                                            \
-            {                                                       \
-                case LEFT_SON:                                      \
-                    copyNode(node, new_node->r_son, LEFT_SON, LEFT_SON);      \
-                    break;                                          \
-                case RIGHT_SON:                                     \
-                    copyNode(node, new_node->r_son, RIGHT_SON, RIGHT_SON);     \
-                    break;                                          \
-                default:                                            \
-                    printf("WRONG SIDE ");                          \
-                    DBG_OUT;                                        \
-                    break;                                          \
-            }                                                       \
+            diffNode(node, new_node->r_son, linking_side, src_side);\
+                                                                    \
         } while(0)                                                  \
+
+//copied node will be linked with the right operation in new tree
+#define cR(linking_side, src_side)                                  \
+        do{                                                         \
+            copyNode(node, new_node->r_son, linking_side, src_side);\
+                                                                    \
+        } while(0)                                                  \
+
+
+#define copyOp()                                                \
+        do{                                                     \
+            copyNodeData(node, new_node);                       \
+        } while(0)     
 
 #define makeOp(operation)                                       \
         do{                                                     \
