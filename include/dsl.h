@@ -4,10 +4,10 @@
             switch(side)                                            \
             {                                                       \
                 case LEFT_SON:                                      \
-                    diffNode(node, new_node->l_son, LEFT_SON);      \
+                    diffNode(node, new_node->l_son, LEFT_SON, LEFT_SON);      \
                     break;                                          \
                 case RIGHT_SON:                                     \
-                    diffNode(node, new_node->l_son, RIGHT_SON);     \
+                    diffNode(node, new_node->l_son, RIGHT_SON, RIGHT_SON);     \
                     break;                                          \
                 default:                                            \
                     printf("WRONG SIDE ");                          \
@@ -21,10 +21,10 @@
             switch(side)                                            \
             {                                                       \
                 case LEFT_SON:                                      \
-                    copyNode(node, new_node->l_son, LEFT_SON);      \
+                    copyNode(node, new_node->l_son, LEFT_SON, LEFT_SON);      \
                     break;                                          \
                 case RIGHT_SON:                                     \
-                    copyNode(node, new_node->l_son, RIGHT_SON);     \
+                    copyNode(node, new_node->l_son, RIGHT_SON, RIGHT_SON);     \
                     break;                                          \
                 default:                                            \
                     printf("WRONG SIDE ");                          \
@@ -38,10 +38,10 @@
             switch(side)                                            \
             {                                                       \
                 case LEFT_SON:                                      \
-                    diffNode(node, new_node->r_son, LEFT_SON);      \
+                    diffNode(node, new_node->r_son, LEFT_SON, LEFT_SON);      \
                     break;                                          \
                 case RIGHT_SON:                                     \
-                    diffNode(node, new_node->r_son, RIGHT_SON);     \
+                    diffNode(node, new_node->r_son, RIGHT_SON, RIGHT_SON);     \
                     break;                                          \
                 default:                                            \
                     printf("WRONG SIDE ");                          \
@@ -55,10 +55,10 @@
             switch(side)                                            \
             {                                                       \
                 case LEFT_SON:                                      \
-                    copyNode(node, new_node->r_son, LEFT_SON);      \
+                    copyNode(node, new_node->r_son, LEFT_SON, LEFT_SON);      \
                     break;                                          \
                 case RIGHT_SON:                                     \
-                    copyNode(node, new_node->r_son, RIGHT_SON);     \
+                    copyNode(node, new_node->r_son, RIGHT_SON, RIGHT_SON);     \
                     break;                                          \
                 default:                                            \
                     printf("WRONG SIDE ");                          \

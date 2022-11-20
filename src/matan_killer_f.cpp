@@ -202,8 +202,8 @@ Exp_node * differentiate(const Exp_node *node)
             {
                 case ADD:
                 case SUB:
-                    diffNode(node, new_node, LEFT_SON);
-                    diffNode(node, new_node, RIGHT_SON);
+                    diffNode(node, new_node, LEFT_SON, LEFT_SON);
+                    diffNode(node, new_node, RIGHT_SON, RIGHT_SON);
                     copyNodeData(node, new_node);
                     return new_node;
                     break;
@@ -255,43 +255,90 @@ Exp_node * differentiate(const Exp_node *node)
     return nullptr;
 }
 
-int diffNode(const Exp_node *argument, Exp_node * result, const char dest)
+int diffNode(const Exp_node *argument, Exp_node * result, const char linking_side_in_copy, const char src_side)
 {
-    switch (dest)
+    Exp_node *node;
+
+    switch (src_side)
     {
         case LEFT_SON:
-            result->l_son = differentiate(argument->l_son);
-            result->l_son->parent = result;
+
+            node = differentiate(argument->l_son);         
             break;
+
         case RIGHT_SON:
-            result->r_son = differentiate(argument->r_son);
-            result->r_son->parent = result;
+            
+            node = differentiate(argument->r_son);
             break;
+
         default:
             return MATAN_KILLER_ERROR_INCORRECT_DESTINATION_PORT;
             break;
+            
     }
+
+    switch (linking_side_in_copy)
+    {
+        case LEFT_SON:
+            result->l_son = node;       
+            break;
+
+        case RIGHT_SON:
+            
+            result->r_son = node;
+            break;
+
+        default:
+            return MATAN_KILLER_ERROR_INCORRECT_DESTINATION_PORT;
+            break;
+            
+    }
+
+    linkSonsToParent(result);
 
     return 0;
 }
 
-int copyNode(const Exp_node *argument, Exp_node * result, const char dest)
+int copyNode(const Exp_node *argument, Exp_node * result, const char linking_side_in_copy, const char src_side)
 {
-    switch (dest)
+    Exp_node *node;
+
+    switch (src_side)
     {
         case LEFT_SON:
-            result->l_son = copy(argument->l_son);
-            result->l_son->parent = result;
+
+            node = copy(argument->l_son);         
             break;
+
         case RIGHT_SON:
-            result->r_son = copy(argument->r_son);
-            result->r_son->parent = result;
+            
+            node = copy(argument->r_son);
             break;
+
         default:
             return MATAN_KILLER_ERROR_INCORRECT_DESTINATION_PORT;
             break;
+            
     }
 
-    return 0;
+    switch (linking_side_in_copy)
+    {
+        case LEFT_SON:
+            result->l_son = node;       
+            break;
 
+        case RIGHT_SON:
+            
+            result->r_son = node;
+            break;
+
+        default:
+            return MATAN_KILLER_ERROR_INCORRECT_DESTINATION_PORT;
+            break;
+            
+    }
+
+    linkSonsToParent(result);
+
+    return 0;
 }

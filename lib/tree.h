@@ -65,6 +65,7 @@ Exp_node * nodeCtor();
 Exp_node * createNode(Node_type type, Value value, Exp_node * l_son, Exp_node * r_son);
 
 int linkToParent(Exp_node *parent, Exp_node *orphan);
+int linkSonsToParent(Exp_node *node);
 
 Exp_node * copy(Exp_node * node);
 int copyNodeData(const Exp_node *src_node, Exp_node *dest_node);

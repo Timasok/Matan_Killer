@@ -108,6 +108,17 @@ int linkToParent(Exp_node *parent, Exp_node *orphan)
 
 }
 
+int linkSonsToParent(Exp_node *node)
+{
+    if (node->l_son)
+        node->l_son->parent = node;
+
+    if (node->r_son)
+        node->r_son->parent = node;
+
+    return 0;
+}
+
 void printIn(const Exp_node * node)
 {
     if (!node)

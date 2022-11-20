@@ -12,7 +12,7 @@ int parseTerminalNode(Exp_node *exp_node, const char * parsing_start, size_t par
 
 Exp_node * differentiate(const Exp_node *exp_node);
 
-int diffNode(const Exp_node *argument, Exp_node * result, const char dest);
-int copyNode(const Exp_node *argument, Exp_node * result, const char dest);
+int diffNode(const Exp_node *argument, Exp_node * result, const char linking_side_in_copy, const char src_side);
+int copyNode(const Exp_node *argument, Exp_node * result, const char linking_side_in_copy, const char src_side);
 
 #endif
