@@ -167,7 +167,7 @@ int parseTerminalNode(Exp_node *exp_node, const char * parsing_start, size_t par
             exp_node->value.op_value = MUL;
             return 0;
 
-        }else if(char_value == '\\')
+        }else if(char_value == '/')
         {
             exp_node->type = OP;
             exp_node->value.op_value = DIV;
@@ -202,6 +202,7 @@ Exp_node * differentiate(const Exp_node *node)
             {
                 case ADD:
                 case SUB:
+                {
 
                     d(LEFT_SON, LEFT_SON);
                     d(RIGHT_SON, RIGHT_SON);
@@ -210,53 +211,113 @@ Exp_node * differentiate(const Exp_node *node)
 
                     return new_node;
                     break;
-                
+
+                }
                 case MUL:
-                
+                {
                     makeOp(ADD);
                     
+                //first level
+
                     leftOp(MUL);
+                    rightOp(MUL);
+                    
+                //second level
+                
                     dL(LEFT_SON, LEFT_SON);
                     cL(RIGHT_SON, RIGHT_SON);
-
-                    rightOp(MUL);
-                    dR(LEFT_SON, LEFT_SON);
-                    cR(RIGHT_SON, RIGHT_SON);
+                    
+                    dR(RIGHT_SON, RIGHT_SON);
+                    cR(LEFT_SON, LEFT_SON);
 
                     return new_node;
                     break;
 
+                }
                 case POW:
+                {
+                    if (node->r_son->type == NUM)
+                    {
+                   
+                        makeOp(MUL);
 
-                    makeOp(MUL);
+                    //creating first level
+                        d(LEFT_SON, LEFT_SON);
+                        rightOp(MUL);
 
-                //creating first level
-                    d(LEFT_SON, LEFT_SON);
+                    //second level
+
+                        cR(LEFT_SON, RIGHT_SON);
+                        right_right_Op(POW);
+
+                    //third level
+
+                        cRR(LEFT_SON, LEFT_SON);
+                        right_right_right_Op(SUB);       
+
+                    //fourth level
+
+                        cRRR(LEFT_SON, RIGHT_SON);
+                        new_node->r_son->r_son->r_son->r_son = createNum(1);
+                        linkSonsToParent(new_node->r_son->r_son->r_son);
+
+                    }else {
+                        
+                    //     makeOp(MUL);
+
+                    // //creating first level
+                    //     leftOp(POW);
+                    //     rightOp(ADD);
+
+                    // //second level
+
+                    //     cR(LEFT_SON, LEFT_SON);
+                    //     cR(RIGHT_SON, RIGHT_SON);
+
+                    //     right_left_Op(MUL);
+                    //     right_right_Op(MUL);
+                                       
+                    // //third level
+
+                    //     dRL(LEFT_SON, LEFT_SON);
+                    //     cRL(RIGHT_SON, RIGHT_SON);
+                        
+                    //     cRR()
+
+                    }
                     
-                    rightOp(MUL);
+                    return new_node;
+                    break;
+                }
+                case DIV:
+                {
+                    makeOp(DIV);
+
+                //first level
+
+                    leftOp(SUB);
+                    rightOp(POW);
 
                 //second level
 
-                    cR(LEFT_SON, RIGHT_SON);
-                    right_right_Op(POW);
+                    left_left_Op(MUL);
+                    left_right_Op(MUL);
+
+                    cR(LEFT_SON,RIGHT_SON);
+                    new_node->r_son->r_son = createNum(2);
+                    linkSonsToParent(new_node->r_son);
 
                 //third level
 
-                    cRR(LEFT_SON, LEFT_SON);
-                    right_right_right_Op(SUB);       
+                    dLL(LEFT_SON, LEFT_SON);
+                    cLL(RIGHT_SON, RIGHT_SON);
 
-                //fourth level
-
-                    cRRR(LEFT_SON, RIGHT_SON);
-                    new_node->r_son->r_son->r_son->r_son = createNum(1);
-                    linkSonsToParent(new_node->r_son->r_son->r_son);
+                    dLR(LEFT_SON, RIGHT_SON);
+                    cLR(RIGHT_SON, LEFT_SON);
 
                     return new_node;
                     break;
-
-                case DIV:
-                    break;
-
+                }
                 default:
                     printf("go f smbdy");
                     break;

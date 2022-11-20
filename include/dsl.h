@@ -39,6 +39,43 @@
                                                                                                     \
         } while(0)                                                                                  \
 
+#define dLL(linking_side, src_side)                                                                 \
+        do{                                                                                         \
+            diffNode(node, new_node->l_son->l_son, linking_side, src_side);                         \
+                                                                                                    \
+        } while(0)                                                                                  \
+
+#define dRL(linking_side, src_side)                                                                 \
+        do{                                                                                         \
+            diffNode(node, new_node->r_son->l_son, linking_side, src_side);                         \
+                                                                                                    \
+        } while(0)                                                                                  \
+
+#define cRL(linking_side, src_side)                                                                 \
+        do{                                                                                         \
+            copyNode(node, new_node->r_son->l_son, linking_side, src_side);                         \
+                                                                                                    \
+        } while(0)                                                                                  \
+
+#define cLL(linking_side, src_side)                                                                 \
+        do{                                                                                         \
+            copyNode(node, new_node->l_son->l_son, linking_side, src_side);                         \
+                                                                                                    \
+        } while(0)                                                                                  \
+
+#define dLR(linking_side, src_side)                                                                 \
+        do{                                                                                         \
+            diffNode(node, new_node->l_son->r_son, linking_side, src_side);                         \
+                                                                                                    \
+        } while(0)                                                                                  \
+
+#define cLR(linking_side, src_side)                                                                 \
+        do{                                                                                         \
+            copyNode(node, new_node->l_son->r_son, linking_side, src_side);                         \
+                                                                                                    \
+        } while(0)                                                                                  \
+
+
 #define cRRR(linking_side, src_side)                                                                \
         do{                                                                                         \
             copyNode(node, new_node->r_son->r_son->r_son, linking_side, src_side);                  \
@@ -62,12 +99,29 @@
             linkToParent(new_node, new_node->l_son);            \
         } while(0)                                               
 
+#define left_left_Op(operation)                                        \
+        do{                                                            \
+            new_node->l_son->l_son = createOp(operation);              \
+            linkToParent(new_node->l_son, new_node->l_son->l_son);     \
+        } while(0)
+
+#define left_right_Op(operation)                                       \
+        do{                                                            \
+            new_node->l_son->r_son = createOp(operation);              \
+            linkToParent(new_node->l_son, new_node->l_son->r_son);     \
+        } while(0)
+
+#define right_left_Op(operation)                                       \
+        do{                                                            \
+            new_node->r_son->l_son = createOp(operation);              \
+            linkToParent(new_node->r_son, new_node->r_son->l_son);     \
+        } while(0)
 
 //TODO add assert that checks if we don't work with deep nodes unless we difine the upper ones
-#define right_right_Op(operation)                               \
-        do{                                                     \
-            new_node->r_son->r_son = createOp(operation);       \
-            linkToParent(new_node->r_son, new_node->r_son->r_son);     \
+#define right_right_Op(operation)                                   \
+        do{                                                         \
+            new_node->r_son->r_son = createOp(operation);           \
+            linkToParent(new_node->r_son, new_node->r_son->r_son);  \
         } while(0)
 
 #define right_right_right_Op(operation)                             \
