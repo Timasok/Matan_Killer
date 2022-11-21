@@ -1,3 +1,15 @@
+#ifndef VAR_INFO
+#define VAR_INFO
+
+struct Var_Info
+{
+    const char * name_of_var;
+    const char * name_of_file;
+    const char * name_of_func;
+    int number_of_line;
+};
+#endif
+
 #ifndef TEXT_FUNCS_H
 #define TEXT_FUNCS_H
 
@@ -26,5 +38,13 @@ int textCtor(Text_info * text, const char * file_name);
 
 int textDtor(Text_info * text);
 int printText(Text_info * text);
+
+#define STRING_DUMP(line) \
+            stringDump(line, #line, __FILE__, __PRETTY_FUNCTION__, __LINE__)
+
+
+int stringDump(const char *string, const char * name_of_var, const char * name_of_file, const char * name_of_func, int number_of_line);
+
+Var_Info *createVarInfo(const char * name_of_var, const char * name_of_file, const char * name_of_func, int number_of_line);
 
 #endif

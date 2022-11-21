@@ -73,22 +73,69 @@ int LexDtor(Lex_sub *lex)
 
 #undef DEF_OP
 
-
-int replaceFuncNames(char * input)
+char * replaceFuncNames(const char * input)
 {
-    // Lex_sub * lex = getLexicalSubstitusions();
 
-    // for (int idx = 0; idx < MAX_FUNC_NUMBER; idx++)
-    // {
+    Lex_sub * lex = getLexicalSubstitusions();
 
-    // }
+    char * result = nullptr;
+    const char * searched = nullptr;
 
-    // char substr[] = "cos";
-    // char * searched = strstr(input, substr);
+    for (int idx = 0; idx < MAX_FUNC_NUMBER; idx++)
+    {
+
+        if (lex[idx].initial == nullptr)
+            break;
+
+        //compare only lower symbols
+        searched = strstr(input, lex[idx].initial);
+
+        if (searched != nullptr)
+        {
+            size_t initial_len = strlen(lex[idx].initial);
+            size_t parsed_len = strlen(lex[idx].parsed);
+            size_t input_len  = strlen(input);
+
+            size_t initial_shift = searched - input;
+            size_t remainder_len = input_len - initial_shift - initial_len; 
+
+#ifdef DEBUG
+        printf("initial_shift = %d parsed_len = %d remainder_len = %d\n", initial_shift, parsed_len, remainder_len);
+        printf("initial_len = %d input_len = %d\n\n", initial_len, input_len);
+#endif
+
+            result = (char *)calloc(initial_shift + parsed_len + remainder_len + 1, sizeof(char));
+
+#ifdef DEBUG
+            printf("allocated space = %d\n", initial_shift + parsed_len + remainder_len);
+
+            STRING_DUMP(input);
+            STRING_DUMP(lex[idx].parsed);
+            STRING_DUMP(searched + initial_len);
+#endif
+            strncpy(result, input, initial_shift);
+
+#ifdef DEBUG
+            STRING_DUMP(result);
+#endif
+            strncat(result, lex[idx].parsed, parsed_len);
+
+#ifdef DEBUG            
+            STRING_DUMP(result);
+#endif            
+            strncat(result, searched + initial_len, remainder_len);
+
+#ifdef DEBUG
+            STRING_DUMP(result);
+#endif
+            searched = nullptr;
+        }
+
+    }
     
-    // LexDtor(lex);
+    LexDtor(lex);
 
-    return 0;
+    return result;
     
 }
 
@@ -96,7 +143,7 @@ int getExpression(Text_info *text, Exp_node *main_node)
 {
     if (text->buf == nullptr)
     {
-
+        //статический массив передаю блэт
         char input[MAX_BUFFER_LENGTH] = {};
 
         fscanf(stdin, "%*[\n]" );
@@ -107,7 +154,18 @@ int getExpression(Text_info *text, Exp_node *main_node)
         
     }else{
 
-        readExpression(main_node, text->lines[0], 0, LEFT_SON);
+        char * result = replaceFuncNames(text->lines[0]);
+
+        if (!result)
+        {
+            readExpression(main_node, text->lines[0], 0, LEFT_SON);
+
+        }else{
+        
+            readExpression(main_node, result, 0, LEFT_SON);
+        }
+
+        free(result);
     }
     
     return 0;

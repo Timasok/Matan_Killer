@@ -16,6 +16,8 @@ struct  Lex_sub
 int LexDtor(Lex_sub *lex);
 Lex_sub * getLexicalSubstitusions();
 
+char * replaceFuncNames(const char * input);
+
 Operator isOp(int symbol);
 
 int getExpression(Text_info *text, Exp_node *main_node);
