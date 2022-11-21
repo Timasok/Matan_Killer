@@ -4,6 +4,18 @@
 #include "tree.h"
 #include "text_funcs.h"
 
+const int MAX_FUNC_NUMBER = 20; 
+
+struct  Lex_sub
+{
+    char *initial;
+    char parsed[5];
+
+};
+
+int LexDtor(Lex_sub *lex);
+Lex_sub * getLexicalSubstitusions();
+
 Operator isOp(int symbol);
 
 int getExpression(Text_info *text, Exp_node *main_node);

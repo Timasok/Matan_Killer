@@ -3,7 +3,7 @@
         do{                                                         \
             diffNode(node, new_node, linking_side, src_side);       \
                                                                     \
-        } while(0)    
+        } while(0)                                                  \
 
 //differentiated node will be linked with the left operation in new tree
 #define dL(linking_side, src_side)                                  \
@@ -81,6 +81,118 @@
             copyNode(node, new_node->r_son->r_son->r_son, linking_side, src_side);                  \
                                                                                                     \
         } while(0)                                                                                  \
+
+#define m(linking_side, number)                                                                     \
+        do{                                                                                         \
+                switch (linking_side)                                                               \
+                {                                                                                   \
+                        case LEFT_SON:                                                              \
+                                new_node->l_son = createNum(number);                                \
+                                break;                                                              \
+                        case RIGHT_SON:                                                             \
+                                new_node->r_son = createNum(number);                                \
+                                break;                                                              \
+                        default:                                                                    \
+                                DBG_OUT;                                                            \
+                                break;                                                              \
+                }                                                                                   \
+                                                                                                    \
+                linkSonsToParent(new_node);                                                         \
+        } while(0)                                                                                  \
+
+
+#define mL(linking_side, number)                                                                    \
+        do{                                                                                         \
+                switch (linking_side)                                                               \
+                {                                                                                   \
+                        case LEFT_SON:                                                              \
+                                new_node->l_son->l_son = createNum(number);                         \
+                                break;                                                              \
+                        case RIGHT_SON:                                                             \
+                                new_node->l_son->r_son = createNum(number);                         \
+                                break;                                                              \
+                        default:                                                                    \
+                                DBG_OUT;                                                            \
+                                break;                                                              \
+                }                                                                                   \
+                                                                                                    \
+                linkSonsToParent(new_node->l_son);                                                  \
+        } while(0)                                                                                  \
+
+
+#define mR(linking_side, number)                                                                    \
+        do{                                                                                         \
+                switch (linking_side)                                                               \
+                {                                                                                   \
+                        case LEFT_SON:                                                              \
+                                new_node->r_son->l_son = createNum(number);                         \
+                                break;                                                              \
+                        case RIGHT_SON:                                                             \
+                                new_node->r_son->r_son = createNum(number);                         \
+                                break;                                                              \
+                        default:                                                                    \
+                                DBG_OUT;                                                            \
+                                break;                                                              \
+                }                                                                                   \
+                                                                                                    \
+                linkSonsToParent(new_node->r_son);                                                  \
+        } while(0)                                                                                  \
+
+#define mRL(linking_side, number)                                                                   \
+        do{                                                                                         \
+                switch (linking_side)                                                               \
+                {                                                                                   \
+                        case LEFT_SON:                                                              \
+                                new_node->r_son->l_son->l_son = createNum(number);                  \
+                                break;                                                              \
+                        case RIGHT_SON:                                                             \
+                                new_node->r_son->l_son->r_son = createNum(number);                  \
+                                break;                                                              \
+                        default:                                                                    \
+                                DBG_OUT;                                                            \
+                                break;                                                              \
+                }                                                                                   \
+                                                                                                    \
+                linkSonsToParent(new_node->r_son->l_son);                                           \
+        } while(0)                                                                                  \
+
+#define mLR(linking_side, number)                                                                   \
+        do{                                                                                         \
+                switch (linking_side)                                                               \
+                {                                                                                   \
+                        case LEFT_SON:                                                              \
+                                new_node->l_son->r_son->l_son = createNum(number);                  \
+                                break;                                                              \
+                        case RIGHT_SON:                                                             \
+                                new_node->l_son->r_son->r_son = createNum(number);                  \
+                                break;                                                              \
+                        default:                                                                    \
+                                DBG_OUT;                                                            \
+                                break;                                                              \
+                }                                                                                   \
+                                                                                                    \
+                linkSonsToParent(new_node->l_son->r_son);                                           \
+        } while(0)                                                                                  \
+
+
+#define mRRR(linking_side, number)                                                                  \
+        do{                                                                                         \
+                switch (linking_side)                                                               \
+                {                                                                                   \
+                        case LEFT_SON:                                                              \
+                                new_node->r_son->r_son->r_son->l_son = createNum(number);           \
+                                break;                                                              \
+                        case RIGHT_SON:                                                             \
+                                new_node->r_son->r_son->r_son->r_son = createNum(number);           \
+                                break;                                                              \
+                        default:                                                                    \
+                                DBG_OUT;                                                            \
+                                break;                                                              \
+                }                                                                                   \
+                                                                                                    \
+                linkSonsToParent(new_node->r_son->r_son->r_son);                                    \
+        } while(0)                                                                                  \
+
 
 #define copyOp()                                                \
         do{                                                     \

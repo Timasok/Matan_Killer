@@ -22,6 +22,76 @@ static Exp_node * createOp(Operator op)
     return createNode(OP, val, nullptr, nullptr);
 }
 
+#define DEF_OP(op_name, op_code, num)                               \
+            else if(counter == num)                                 \
+            {                                                       \
+                original[counter].initial = strdup(#op_name);       \
+                sprintf(original[counter].parsed, "(0)%c", op_code);\
+                counter++;                                          \
+                continue;                                           \
+            }                                                       \
+
+Lex_sub * getLexicalSubstitusions()
+{
+    Lex_sub * original = (Lex_sub *)calloc(MAX_FUNC_NUMBER, sizeof(Lex_sub));
+
+    size_t counter = 0;
+
+    while (counter < MAX_FUNC_NUMBER)
+    {
+        if (0){}
+        #include "operations.h"
+        break;
+    }
+
+#ifdef DEBUG
+    for (int idx = 0; idx < MAX_FUNC_NUMBER; idx++)
+    {
+        printf("LEX[%d] = {%s, %s}\n", idx, original[idx].initial, original[idx].parsed);
+
+    }
+#endif
+
+    return original;
+
+}
+
+int LexDtor(Lex_sub *lex)
+{
+    if(!lex)
+        return -1;
+
+    for (int idx = 0; idx < MAX_FUNC_NUMBER; idx++)
+    {
+        free(lex[idx].initial);
+    }
+
+    free(lex);
+
+    return 0;
+}
+
+#undef DEF_OP
+
+
+int replaceFuncNames(char * input)
+{
+    // Lex_sub * lex = getLexicalSubstitusions();
+
+    // for (int idx = 0; idx < MAX_FUNC_NUMBER; idx++)
+    // {
+
+    // }
+
+    // char substr[] = "cos";
+    // char * searched = strstr(input, substr);
+    
+    // LexDtor(lex);
+
+    return 0;
+    
+}
+
 int getExpression(Text_info *text, Exp_node *main_node)
 {
     if (text->buf == nullptr)
@@ -118,7 +188,7 @@ int readExpression(Exp_node * exp_node, const char * input, size_t shift, int fr
     return 0;
 }
 
-#define DEF_OP(op_name, op_code)                                    \
+#define DEF_OP(op_name, op_code, num)                               \
      else if(symbol == op_code)                                     \
     {                                                               \
         result = op_name;                                           \
@@ -129,9 +199,7 @@ Operator isOp(int symbol)
     Operator result = NOT_OP;
 
     if (0)
-    {
-
-    }
+    { }
     #include "operations.h"    
 
     return result;
@@ -264,8 +332,7 @@ Exp_node * differentiate(const Exp_node *node)
                     //fourth level
 
                         cRRR(LEFT_SON, RIGHT_SON);
-                        new_node->r_son->r_son->r_son->r_son = createNum(1);
-                        linkSonsToParent(new_node->r_son->r_son->r_son);
+                        mRRR(RIGHT_SON, 1);
 
                     }else {
                         
@@ -309,8 +376,7 @@ Exp_node * differentiate(const Exp_node *node)
                     left_right_Op(MUL);
 
                     cR(LEFT_SON,RIGHT_SON);
-                    new_node->r_son->r_son = createNum(2);
-                    linkSonsToParent(new_node->r_son);
+                    mR(RIGHT_SON, 2);
 
                 //third level
 
@@ -332,25 +398,28 @@ Exp_node * differentiate(const Exp_node *node)
 
                 //second level
 
-                    new_node->l_son->l_son = createNum(0);
-                    linkSonsToParent(new_node->l_son);
+                    mL(LEFT_SON, 0);
                     cL(RIGHT_SON, RIGHT_SON);
 
                     break;
                 }
                 case COS:
                 {
-                //     makeOp(MUL);
+                    makeOp(MUL);
 
-                // //creating first level
-                //     d(RIGHT_SON, RIGHT_SON);
-                //     leftOp(COS);
+                //first level
+                   
+                    leftOp(MUL);
+                    d(RIGHT_SON, RIGHT_SON);
 
-                // //second level
-
-                //     new_node->l_son->l_son = createNum(0);
-                //     linkSonsToParent(new_node->l_son);
-                //     cL(RIGHT_SON, RIGHT_SON);
+                //second level
+                                   
+                    mL(LEFT_SON, -1); 
+                    left_right_Op(SIN);  
+                
+                //third level
+                    cLR(RIGHT_SON, RIGHT_SON);
+                    mLR(LEFT_SON, 0);
 
                     break;
                 }

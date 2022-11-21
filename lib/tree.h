@@ -29,7 +29,7 @@ enum Node_type
 
 };
 
-#define DEF_OP(op_name, op_code)                            \
+#define DEF_OP(op_name, op_code, num)                       \
     op_name = op_code,                                      \
 
 enum Operator
