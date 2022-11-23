@@ -21,12 +21,14 @@ int main()
     printf("\n");
     treeDump(func->l_son);
 
-    Exp_node * rolledUp = rollUpTree(func->l_son); 
+    Exp_node * simplified = simplifyTree(func->l_son); 
 
-    printIn(rolledUp);
+    treeDump(simplified);
+
+    printIn(simplified);
     printf("\n");
 
-    nodeDtor(rolledUp);
+    nodeDtor(simplified);
 
 /*
     nodeDtor(func);

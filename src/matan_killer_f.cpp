@@ -237,7 +237,7 @@ int readExpression(Exp_node * exp_node, const char * input, size_t shift, int fr
     {
 
         Exp_node * new_node = nodeConnect(exp_node, free_port);
-        readExpression(new_node, input, shift + 1, free_port    );
+        readExpression(new_node, input, shift + 1, LEFT_SON);
 
     }else{
     
@@ -282,7 +282,7 @@ bool isTerminal(Exp_node *node)
 bool hasNumSons(Exp_node *node)
 {
     //todo add soft assert
-    assert(isTerminal(node));
+    assert(!isTerminal(node));
 
     if (node->l_son->type == NUM && node->r_son->type == NUM)
     {

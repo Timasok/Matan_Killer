@@ -8,14 +8,14 @@ label=<
 <table border="0" cellborder="1" cellspacing="0">
     <tr><td bgcolor="#dfdf91" port = "H1">NODE 1 = 0x604000000050</td></tr>
     <tr><td bgcolor= "#5ca1cc"><font color="black"> 
-OPERATION (/)
+OPERATION (*)
  </font></td></tr>
     <tr>
     <td>
         <table border="0" cellborder="1">
         <tr>
             <td bgcolor = "#70de9f" port = "L1">  LEFT = 0x604000000090 </td>
-            <td bgcolor = "#e02828" port = "R1"> RIGHT = 0x6040000000d0 </td>
+            <td bgcolor = "#e02828" port = "R1"> RIGHT = 0x604000000190 </td>
         </tr> 
         </table> 
     </td>
@@ -23,12 +23,12 @@ OPERATION (/)
 </table>>
 ]
 
-node2 [
+node3 -> node1:H1;node2 [
 label=<
 <table border="0" cellborder="1" cellspacing="0">
     <tr><td bgcolor="#dfdf91" port = "H2">NODE 2 = 0x604000000090</td></tr>
     <tr><td bgcolor= "#5ca1cc"><font color="black"> 
-NUMBER (91)
+VARIABLE (x)
  </font></td></tr>
     <tr>
     <td>
@@ -46,9 +46,9 @@ NUMBER (91)
 node1 -> node2:H2;node3 [
 label=<
 <table border="0" cellborder="1" cellspacing="0">
-    <tr><td bgcolor="#dfdf91" port = "H3">NODE 3 = 0x6040000000d0</td></tr>
+    <tr><td bgcolor="#dfdf91" port = "H3">NODE 3 = 0x604000000190</td></tr>
     <tr><td bgcolor= "#5ca1cc"><font color="black"> 
-NUMBER (13)
+NUMBER (7)
  </font></td></tr>
     <tr>
     <td>
