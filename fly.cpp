@@ -1,14 +1,10 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
-#include <ctype.h>
-#include <math.h>
-
-#include "matan_killer_f.h"
-#include "matan_killer_debug.h"
-#include "dsl.h"
-
+# 0 "./src/matan_killer_f.cpp"
+# 0 "<built-in>"
+# 0 "<command-line>"
+# 1 "/usr/include/stdc-predef.h" 1 3 4
+# 0 "<command-line>" 2
+# 1 "./src/matan_killer_f.cpp"
+# 12 "./src/matan_killer_f.cpp"
 static Exp_node * createNum(int number)
 {
     Value val = {};
@@ -22,16 +18,7 @@ static Exp_node * createOp(Operator op)
     val.op_value = op;
     return createNode(OP, val, nullptr, nullptr);
 }
-
-#define DEF_OP(op_name, op_code, num, oper)                         \
-            else if(counter == num)                                 \
-            {                                                       \
-                original[counter].initial = strdup(#op_name);       \
-                sprintf(original[counter].parsed, "(0)%c", op_code);\
-                counter++;                                          \
-                continue;                                           \
-            }                                                       \
-
+# 35 "./src/matan_killer_f.cpp"
 Lex_sub * getLexicalSubstitusions()
 {
     Lex_sub * original = (Lex_sub *)calloc(MAX_FUNC_NUMBER, sizeof(Lex_sub));
@@ -41,18 +28,41 @@ Lex_sub * getLexicalSubstitusions()
     while (counter < MAX_FUNC_NUMBER)
     {
         if (0){}
-        #include "operations.h"
+# 1 "./lib/operations.h" 1
+# 11 "./lib/operations.h"
+else if(counter == -2) { original[counter].initial = strdup("NOT_OP"); sprintf(original[counter].parsed, "(0)%c", '\r'); counter++; continue; }
+
+else if(counter == -1) { original[counter].initial = strdup("ADD"); sprintf(original[counter].parsed, "(0)%c", '+'); counter++; continue; }
+
+else if(counter == -1) { original[counter].initial = strdup("SUB"); sprintf(original[counter].parsed, "(0)%c", '-'); counter++; continue; }
+
+else if(counter == -1) { original[counter].initial = strdup("MUL"); sprintf(original[counter].parsed, "(0)%c", '*'); counter++; continue; }
+
+else if(counter == -1) { original[counter].initial = strdup("DIV"); sprintf(original[counter].parsed, "(0)%c", '/'); counter++; continue; }
+
+else if(counter == -3) { original[counter].initial = strdup("POW"); sprintf(original[counter].parsed, "(0)%c", '^'); counter++; continue; }
+
+else if(counter == 0) { original[counter].initial = strdup("SIN"); sprintf(original[counter].parsed, "(0)%c", 'S'); counter++; continue; }
+
+else if(counter == 1) { original[counter].initial = strdup("LN"); sprintf(original[counter].parsed, "(0)%c", 'L'); counter++; continue; }
+
+else if(counter == 2) { original[counter].initial = strdup("COS"); sprintf(original[counter].parsed, "(0)%c", 'C'); counter++; continue; }
+
+else if(counter == 3) { original[counter].initial = strdup("TAN"); sprintf(original[counter].parsed, "(0)%c", 'T'); counter++; continue; }
+
+else if(counter == 4) { original[counter].initial = strdup("SH"); sprintf(original[counter].parsed, "(0)%c", 's'); counter++; continue; }
+
+else if(counter == 5) { original[counter].initial = strdup("CH"); sprintf(original[counter].parsed, "(0)%c", 'c'); counter++; continue; }
+
+else if(counter == 6) { original[counter].initial = strdup("TH"); sprintf(original[counter].parsed, "(0)%c", 't'); counter++; continue; }
+
+else if(counter == 7) { original[counter].initial = strdup("ARCTG"); sprintf(original[counter].parsed, "(0)%c", '&'); counter++; continue; }
+
+else if(counter == 8) { original[counter].initial = strdup("ARCCOS"); sprintf(original[counter].parsed, "(0)%c", 'W'); counter++; continue; }
+# 45 "./src/matan_killer_f.cpp" 2
         break;
     }
-
-#ifdef DEBUG
-    for (int idx = 0; idx < MAX_FUNC_NUMBER; idx++)
-    {
-        printf("LEX[%d] = {%s, %s}\n", idx, original[idx].initial, original[idx].parsed);
-
-    }
-#endif
-
+# 56 "./src/matan_killer_f.cpp"
     return original;
 
 }
@@ -72,7 +82,7 @@ int LexDtor(Lex_sub *lex)
     return 0;
 }
 
-#undef DEF_OP
+
 
 char * replaceFuncNames(const char * input)
 {
@@ -88,63 +98,56 @@ char * replaceFuncNames(const char * input)
         if (lex[idx].initial == nullptr)
             break;
 
-        //compare only lower symbols
+
         searched = strstr(input, lex[idx].initial);
 
         if (searched != nullptr)
         {
             size_t initial_len = strlen(lex[idx].initial);
             size_t parsed_len = strlen(lex[idx].parsed);
-            size_t input_len  = strlen(input);
+            size_t input_len = strlen(input);
 
             size_t initial_shift = searched - input;
-            size_t remainder_len = input_len - initial_shift - initial_len; 
+            size_t remainder_len = input_len - initial_shift - initial_len;
 
-#ifdef DEBUG
-        printf("initial_shift = %d parsed_len = %d remainder_len = %d\n", initial_shift, parsed_len, remainder_len);
-        printf("initial_len = %d input_len = %d\n\n", initial_len, input_len);
-#endif
+
+
+
+
 
             result = (char *)calloc(initial_shift + parsed_len + remainder_len + 1, sizeof(char));
-
-#ifdef DEBUG
-            printf("allocated space = %d\n", initial_shift + parsed_len + remainder_len);
-
-            STRING_DUMP(input);
-            STRING_DUMP(lex[idx].parsed);
-            STRING_DUMP(searched + initial_len);
-#endif
+# 117 "./src/matan_killer_f.cpp"
             strncpy(result, input, initial_shift);
 
-#ifdef DEBUG
-            STRING_DUMP(result);
-#endif
+
+
+
             strncat(result, lex[idx].parsed, parsed_len);
 
-#ifdef DEBUG            
-            STRING_DUMP(result);
-#endif            
+
+
+
             strncat(result, searched + initial_len, remainder_len);
 
-#ifdef DEBUG
-            STRING_DUMP(result);
-#endif
+
+
+
             searched = nullptr;
         }
 
     }
-    
+
     LexDtor(lex);
 
     return result;
-    
+
 }
 
 int getExpression(Text_info *text, Exp_node *main_node)
 {
     if (text->buf == nullptr)
     {
-        //статический массив передаю блэт
+
         char input[MAX_BUFFER_LENGTH] = {};
 
         fscanf(stdin, "%*[\n]" );
@@ -152,7 +155,7 @@ int getExpression(Text_info *text, Exp_node *main_node)
         scanf("%[^\n]s", input);
 
         readExpression(main_node, input, 0, LEFT_SON);
-        
+
     }else{
 
         char * result = replaceFuncNames(text->lines[0]);
@@ -162,13 +165,13 @@ int getExpression(Text_info *text, Exp_node *main_node)
             readExpression(main_node, text->lines[0], 0, LEFT_SON);
 
         }else{
-        
+
             readExpression(main_node, result, 0, LEFT_SON);
         }
 
         free(result);
     }
-    
+
     return 0;
 }
 
@@ -180,11 +183,11 @@ int readExpression(Exp_node * exp_node, const char * input, size_t shift, int fr
     if (input == nullptr || shift == len)
         return 0;
 
-#ifdef DEBUG
-    printf("\ninput = %s\n", &input[shift]);
-#endif
 
-    const char * open_bracket  = strchr(&input[shift], '(');
+
+
+
+    const char * open_bracket = strchr(&input[shift], '(');
     const char * close_bracket = strchr(&input[shift], ')');
 
     if (open_bracket == nullptr && close_bracket == nullptr)
@@ -209,23 +212,23 @@ int readExpression(Exp_node * exp_node, const char * input, size_t shift, int fr
 
     }
 
-#ifdef DEBUG
-    printf("open_bracket = %s close_bracket = %s first_bracket = %s\n", open_bracket, close_bracket, first_bracket);
-#endif
+
+
+
 
     size_t parsing_length = first_bracket - &input[shift];
 
-#ifdef DEBUG
-    printf("parsing_length = %lu free_port = %d\n", parsing_length, free_port);
-#endif
+
+
+
 
     if (parsing_length > 0)
     {
         parseTerminalNode(exp_node, &input[shift], parsing_length);
-    
-    #ifdef DEBUG
-        dumpExpNode(exp_node);
-    #endif
+
+
+
+
 
         readExpression(exp_node, input, shift + parsing_length, free_port);
 
@@ -237,21 +240,21 @@ int readExpression(Exp_node * exp_node, const char * input, size_t shift, int fr
     {
 
         Exp_node * new_node = nodeConnect(exp_node, free_port);
-        readExpression(new_node, input, shift + 1, free_port    );
+        readExpression(new_node, input, shift + 1, free_port );
 
     }else{
-    
+
         readExpression(exp_node, input, shift + 1, free_port);
     }
 
     return 0;
 }
 
-#define DEF_OP(op_name, op_code, num, oper)                         \
-     else if(symbol == op_code)                                     \
-    {                                                               \
-        result = op_name;                                           \
-    }                                                               \
+
+
+
+
+
 
 Operator isOp(int symbol)
 {
@@ -259,12 +262,43 @@ Operator isOp(int symbol)
 
     if (0)
     { }
-    #include "operations.h"    
+# 1 "./lib/operations.h" 1
+# 11 "./lib/operations.h"
+else if(symbol == '\r') { result = NOT_OP; }
+
+else if(symbol == '+') { result = ADD; }
+
+else if(symbol == '-') { result = SUB; }
+
+else if(symbol == '*') { result = MUL; }
+
+else if(symbol == '/') { result = DIV; }
+
+else if(symbol == '^') { result = POW; }
+
+else if(symbol == 'S') { result = SIN; }
+
+else if(symbol == 'L') { result = LN; }
+
+else if(symbol == 'C') { result = COS; }
+
+else if(symbol == 'T') { result = TAN; }
+
+else if(symbol == 's') { result = SH; }
+
+else if(symbol == 'c') { result = CH; }
+
+else if(symbol == 't') { result = TH; }
+
+else if(symbol == '&') { result = ARCTG; }
+
+else if(symbol == 'W') { result = ARCCOS; }
+# 263 "./src/matan_killer_f.cpp" 2
 
     return result;
 }
 
-#undef DEF_OP
+
 
 bool isTerminal(Exp_node *node)
 {
@@ -273,7 +307,7 @@ bool isTerminal(Exp_node *node)
         return true;
 
     }else {
-        
+
         return false;
     }
 
@@ -281,7 +315,7 @@ bool isTerminal(Exp_node *node)
 
 bool hasNumSons(Exp_node *node)
 {
-    //todo add soft assert
+
     assert(isTerminal(node));
 
     if (node->l_son->type == NUM && node->r_son->type == NUM)
@@ -299,7 +333,7 @@ Exp_node * simplifyTree(Exp_node *node)
 
     Exp_node * result = node;
 
-    if (!node) 
+    if (!node)
         return result;
 
     if (node->type == VAR)
@@ -315,7 +349,7 @@ Exp_node * simplifyTree(Exp_node *node)
     if (node->l_son)
     {
         Exp_node *left_result = simplifyTree(node->l_son);
-        
+
         if (result->l_son != left_result)
         {
             result->l_son = left_result;
@@ -326,7 +360,7 @@ Exp_node * simplifyTree(Exp_node *node)
     if (node->r_son)
     {
         Exp_node *right_result = simplifyTree(node->r_son);
-        
+
         if (result->r_son != right_result)
         {
             result->r_son = right_result;
@@ -337,14 +371,7 @@ Exp_node * simplifyTree(Exp_node *node)
     return result;
 
 }
-
-#define DEF_OP(op_name, op_code, num, oper)                                                 \
-    else if (node->value.op_value == op_code && num == MAGIC_NUMBER_THAT_STANDS_FOR_ARITHM) \
-    {                                                                                       \
-        val.dbl_value = node->l_son->value.dbl_value oper node->r_son->value.dbl_value;     \
-        have_to_roll_up = true;                                                             \
-    }                                                                                       \
-
+# 349 "./src/matan_killer_f.cpp"
 Exp_node * rollUpTree(Exp_node *node)
 {
     bool have_to_roll_up = false;
@@ -352,12 +379,43 @@ Exp_node * rollUpTree(Exp_node *node)
     Exp_node * new_node = node;
 
     if (0) {}
-    #include "operations.h"
+# 1 "./lib/operations.h" 1
+# 11 "./lib/operations.h"
+else if (node->value.op_value == '\r' && -2 == MAGIC) { val.dbl_value = (node->l_son->value.dbl_value) '\r' (node->r_son->value.dbl_value); have_to_roll_up = true; }
+
+else if (node->value.op_value == '+' && -1 == MAGIC) { val.dbl_value = (node->l_son->value.dbl_value) '+' (node->r_son->value.dbl_value); have_to_roll_up = true; }
+
+else if (node->value.op_value == '-' && -1 == MAGIC) { val.dbl_value = (node->l_son->value.dbl_value) '-' (node->r_son->value.dbl_value); have_to_roll_up = true; }
+
+else if (node->value.op_value == '*' && -1 == MAGIC) { val.dbl_value = (node->l_son->value.dbl_value) '*' (node->r_son->value.dbl_value); have_to_roll_up = true; }
+
+else if (node->value.op_value == '/' && -1 == MAGIC) { val.dbl_value = (node->l_son->value.dbl_value) '/' (node->r_son->value.dbl_value); have_to_roll_up = true; }
+
+else if (node->value.op_value == '^' && -3 == MAGIC) { val.dbl_value = (node->l_son->value.dbl_value) '^' (node->r_son->value.dbl_value); have_to_roll_up = true; }
+
+else if (node->value.op_value == 'S' && 0 == MAGIC) { val.dbl_value = (node->l_son->value.dbl_value) 'S' (node->r_son->value.dbl_value); have_to_roll_up = true; }
+
+else if (node->value.op_value == 'L' && 1 == MAGIC) { val.dbl_value = (node->l_son->value.dbl_value) 'L' (node->r_son->value.dbl_value); have_to_roll_up = true; }
+
+else if (node->value.op_value == 'C' && 2 == MAGIC) { val.dbl_value = (node->l_son->value.dbl_value) 'C' (node->r_son->value.dbl_value); have_to_roll_up = true; }
+
+else if (node->value.op_value == 'T' && 3 == MAGIC) { val.dbl_value = (node->l_son->value.dbl_value) 'T' (node->r_son->value.dbl_value); have_to_roll_up = true; }
+
+else if (node->value.op_value == 's' && 4 == MAGIC) { val.dbl_value = (node->l_son->value.dbl_value) 's' (node->r_son->value.dbl_value); have_to_roll_up = true; }
+
+else if (node->value.op_value == 'c' && 5 == MAGIC) { val.dbl_value = (node->l_son->value.dbl_value) 'c' (node->r_son->value.dbl_value); have_to_roll_up = true; }
+
+else if (node->value.op_value == 't' && 6 == MAGIC) { val.dbl_value = (node->l_son->value.dbl_value) 't' (node->r_son->value.dbl_value); have_to_roll_up = true; }
+
+else if (node->value.op_value == '&' && 7 == MAGIC) { val.dbl_value = (node->l_son->value.dbl_value) '&' (node->r_son->value.dbl_value); have_to_roll_up = true; }
+
+else if (node->value.op_value == 'W' && 8 == MAGIC) { val.dbl_value = (node->l_son->value.dbl_value) 'W' (node->r_son->value.dbl_value); have_to_roll_up = true; }
+# 357 "./src/matan_killer_f.cpp" 2
 
     if (have_to_roll_up)
     {
         new_node = createNode(NUM, val, NULL, NULL);
-        
+
         if (node->parent)
         {
             linkToParent(node->parent, new_node);
@@ -370,7 +428,7 @@ Exp_node * rollUpTree(Exp_node *node)
     return new_node;
 }
 
-#undef DEF_OP
+
 
 int parseTerminalNode(Exp_node *exp_node, const char * parsing_start, size_t parsing_length)
 {
@@ -378,21 +436,21 @@ int parseTerminalNode(Exp_node *exp_node, const char * parsing_start, size_t par
     char * terminalValue = strdup(parsing_start);
     terminalValue[parsing_length] = '\0';
 
-#ifdef DEBUG
-    printf("input_segment =%s \nparsed_segment = %s\n", parsing_start, terminalValue);
-#endif
+
+
+
 
     double value;
     char char_value = ' ';
-    
+
     if (sscanf(terminalValue, "%lf", &value) == 1)
     {
         exp_node->type = NUM;
         exp_node->value.dbl_value = value;
         free(terminalValue);
         return 0;
-    
-    }else /*if(parsing_length == 1)*///TODO maybe add check in here
+
+    }else
     {
         sscanf(terminalValue, " %c", &char_value);
         free(terminalValue);
@@ -456,17 +514,17 @@ Exp_node * differentiate(const Exp_node *node)
                 case MUL:
                 {
                     makeOp(ADD);
-                    
-                //first level
+
+
 
                     leftOp(MUL);
                     rightOp(MUL);
-                    
-                //second level
+
+
 
                     dL(LEFT_SON, LEFT_SON);
                     cL(RIGHT_SON, RIGHT_SON);
-                    
+
                     dR(RIGHT_SON, RIGHT_SON);
                     cR(LEFT_SON, LEFT_SON);
 
@@ -477,51 +535,30 @@ Exp_node * differentiate(const Exp_node *node)
                 {
                     if (node->r_son->type == NUM)
                     {
-                   
+
                         makeOp(MUL);
 
-                    //creating first level
+
                         d(LEFT_SON, LEFT_SON);
                         rightOp(MUL);
 
-                    //second level
+
 
                         cR(LEFT_SON, RIGHT_SON);
                         right_right_Op(POW);
 
-                    //third level
+
 
                         cRR(LEFT_SON, LEFT_SON);
-                        right_right_right_Op(SUB);       
+                        right_right_right_Op(SUB);
 
-                    //fourth level
+
 
                         cRRR(LEFT_SON, RIGHT_SON);
                         mRRR(RIGHT_SON, 1);
 
                     }else {
-                        
-                    //     makeOp(MUL);
-
-                    // //creating first level
-                    //     leftOp(POW);
-                    //     rightOp(ADD);
-
-                    // //second level
-
-                    //     cR(LEFT_SON, LEFT_SON);
-                    //     cR(RIGHT_SON, RIGHT_SON);
-
-                    //     right_left_Op(MUL);
-                    //     right_right_Op(MUL);
-                                       
-                    // //third level
-
-                    //     dRL(LEFT_SON, LEFT_SON);
-                    //     cRL(RIGHT_SON, RIGHT_SON);
-                        
-                    //     cRR()
-
+# 526 "./src/matan_killer_f.cpp"
                     }
 
                     break;
@@ -530,12 +567,12 @@ Exp_node * differentiate(const Exp_node *node)
                 {
                     makeOp(DIV);
 
-                //first level
+
 
                     leftOp(SUB);
                     rightOp(POW);
 
-                //second level
+
 
                     left_left_Op(MUL);
                     left_right_Op(MUL);
@@ -543,25 +580,25 @@ Exp_node * differentiate(const Exp_node *node)
                     cR(LEFT_SON,RIGHT_SON);
                     mR(RIGHT_SON, 2);
 
-                //third level
+
 
                     dLL(LEFT_SON, LEFT_SON);
                     cLL(RIGHT_SON, RIGHT_SON);
 
                     dLR(LEFT_SON, RIGHT_SON);
                     cLR(RIGHT_SON, LEFT_SON);
-                    
+
                     break;
                 }
                 case SIN:
                 {
                     makeOp(MUL);
 
-                //creating first level
+
                     d(RIGHT_SON, RIGHT_SON);
                     leftOp(COS);
 
-                //second level
+
 
                     mL(LEFT_SON, 0);
                     cL(RIGHT_SON, RIGHT_SON);
@@ -572,17 +609,17 @@ Exp_node * differentiate(const Exp_node *node)
                 {
                     makeOp(MUL);
 
-                //first level
-                   
+
+
                     leftOp(MUL);
                     d(RIGHT_SON, RIGHT_SON);
 
-                //second level
-                                   
-                    mL(LEFT_SON, -1); 
-                    left_right_Op(SIN);  
-                
-                //third level
+
+
+                    mL(LEFT_SON, -1);
+                    left_right_Op(SIN);
+
+
                     cLR(RIGHT_SON, RIGHT_SON);
                     mLR(LEFT_SON, 0);
 
@@ -592,12 +629,12 @@ Exp_node * differentiate(const Exp_node *node)
                 {
                     makeOp(MUL);
 
-                //first level
+
 
                     leftOp(DIV);
                     d(RIGHT_SON, RIGHT_SON);
 
-                //second level
+
 
                     mL(LEFT_SON, 1);
                     cL(RIGHT_SON, RIGHT_SON);
@@ -606,7 +643,7 @@ Exp_node * differentiate(const Exp_node *node)
                 }
                 case TAN:
                 {
-                    
+
                     break;
                 }
                 default:
@@ -616,9 +653,9 @@ Exp_node * differentiate(const Exp_node *node)
             break;
     }
 
-    #ifdef DEBUG
-        dumpExpNode(new_node);
-    #endif
+
+
+
     return new_node;
 }
 
@@ -630,35 +667,35 @@ int diffNode(const Exp_node *argument, Exp_node * result, const char linking_sid
     {
         case LEFT_SON:
 
-            node = differentiate(argument->l_son);         
+            node = differentiate(argument->l_son);
             break;
 
         case RIGHT_SON:
-            
+
             node = differentiate(argument->r_son);
             break;
 
         default:
             return MATAN_KILLER_ERROR_INCORRECT_DESTINATION_PORT;
             break;
-            
+
     }
 
     switch (linking_side_in_copy)
     {
         case LEFT_SON:
-            result->l_son = node;       
+            result->l_son = node;
             break;
 
         case RIGHT_SON:
-            
+
             result->r_son = node;
             break;
 
         default:
             return MATAN_KILLER_ERROR_INCORRECT_DESTINATION_PORT;
             break;
-            
+
     }
 
     linkSonsToParent(result);
@@ -674,35 +711,35 @@ int copyNode(const Exp_node *argument, Exp_node * result, const char linking_sid
     {
         case LEFT_SON:
 
-            node = copy(argument->l_son);         
+            node = copy(argument->l_son);
             break;
 
         case RIGHT_SON:
-            
+
             node = copy(argument->r_son);
             break;
 
         default:
             return MATAN_KILLER_ERROR_INCORRECT_DESTINATION_PORT;
             break;
-            
+
     }
 
     switch (linking_side_in_copy)
     {
         case LEFT_SON:
-            result->l_son = node;       
+            result->l_son = node;
             break;
 
         case RIGHT_SON:
-            
+
             result->r_son = node;
             break;
 
         default:
             return MATAN_KILLER_ERROR_INCORRECT_DESTINATION_PORT;
             break;
-            
+
     }
 
     linkSonsToParent(result);

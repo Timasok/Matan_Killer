@@ -21,6 +21,16 @@ int main()
     printf("\n");
     treeDump(func->l_son);
 
+    Exp_node * rolledUp = rollUpTree(func->l_son); 
+
+    printIn(rolledUp);
+    printf("\n");
+
+    nodeDtor(rolledUp);
+
+/*
+    nodeDtor(func);
+    free(func);
     Exp_node * diff_func = differentiate(func->l_son);
     // Exp_node * diff_func = copy(func->l_son);
     
@@ -30,12 +40,11 @@ int main()
     printf("\n");
 
     nodeDtor(diff_func);
-    free(diff_func);
+    free(diff_func);// because we create null node that we link everything with
 
-    nodeDtor(func);
+*/
     
     textDtor(&text);
-    free(func);
 
     return 0;
 }
