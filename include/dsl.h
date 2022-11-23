@@ -236,14 +236,14 @@
             linkToParent(new_node->r_son, new_node->r_son->r_son);  \
         } while(0)
 
-#define right_right_right_Op(operation)                             \
-        do{                                                         \
-            new_node->r_son->r_son->r_son = createOp(operation);    \
+#define right_right_right_Op(operation)                                           \
+        do{                                                                       \
+            new_node->r_son->r_son->r_son = createOp(operation);                  \
             linkToParent(new_node->r_son->r_son, new_node->r_son->r_son->r_son);  \
-        } while(0)    
+        } while(0)                                                                \
 
 #define rightOp(operation)                                      \
         do{                                                     \
             new_node->r_son = createOp(operation);              \
             linkToParent(new_node, new_node->r_son);            \
-        } while(0)                                              
+        } while(0)                                 

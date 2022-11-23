@@ -251,7 +251,7 @@ int readExpression(Exp_node * exp_node, const char * input, size_t shift, int fr
     {
 
         Exp_node * new_node = nodeConnect(exp_node, free_port);
-        readExpression(new_node, input, shift + 1, LEFT_SON);
+        readExpression(new_node, input, shift + 1, LEFT_SON);//TODO спорный мяч
 
     }else{
     
@@ -278,10 +278,35 @@ Operator isOp(int symbol)
     return result;
 }
 
+son equalsZero(Exp_node *node)
+{
+    if (node->l_son->type == NUM && node->l_son->value.dbl_value == 0)
+        return LEFT_SON;
+
+    if (node->r_son->type == NUM && node->r_son->value.dbl_value == 0)
+        return RIGHT_SON;
+
+    return HOLLOW;
+}
+
+son equalsOne(Exp_node *node)
+{
+    if (node->l_son->type == NUM && node->l_son->value.dbl_value == 1)
+        return LEFT_SON;
+
+    if (node->r_son->type == NUM && node->r_son->value.dbl_value == 1)
+        return RIGHT_SON;
+
+    return HOLLOW;
+}
+
 #undef DEF_OP
 
 bool isTerminal(Exp_node *node)
 {
+    if (!node)
+        return false;
+
     if (!node->l_son && !node->r_son)
     {
         return true;
@@ -320,10 +345,42 @@ Exp_node * simplifyTree(Exp_node *node)
        return result;
     }
 
+    // while (node->type == OP && hasNumSons(node))
+    // {
+    //     Exp_node * node_old = node;
+        
+    //     dumpExpNode(node);
+
+    //     node = rollUpTree(node);
+    //     node = processOneZeroCases(node);
+
+    //     if(node == node_old)
+    //         return node;
+    // }
+//
     if (node->type == OP && hasNumSons(node))
     {
-        return rollUpTree(node);
+        // Exp_node * tmp = rollUpTree(node);
+        return processOneZeroCases(node);
+
     }
+
+    // if (node->type == OP && hasNumSons(node))
+    // {
+    //     // Exp_node * tmp_old = tmp;
+    //     dumpExpNode(node);
+
+    //     Exp_node * tmp = rollUpTree(node);
+     
+    //     dumpExpNode(tmp);
+
+    //     tmp = processOneZeroCases(tmp);   
+
+    //     dumpExpNode(tmp);
+
+    //     return tmp;
+
+    // }
 
     if (node->l_son)
     {
@@ -384,6 +441,148 @@ Exp_node * rollUpTree(Exp_node *node)
 }
 
 #undef DEF_OP
+
+static bool expressionEqualsOrdinary(const int side_of_one, const int side_of_zero, const int ordinary_side, const Operator node_op)
+{
+    if (node_op == MUL && side_of_one != HOLLOW)
+        return true;
+
+    if (node_op == DIV && side_of_one == RIGHT_SON)
+        return true;
+
+    if (node_op == ADD && side_of_zero != HOLLOW)
+        return true;
+
+    if (node_op == SUB && side_of_zero == RIGHT_SON)
+        return true;
+
+    if (node_op == POW && side_of_one == RIGHT_SON)
+        return true;
+
+    return false;
+}
+
+static bool expressionEqualsZero(const int side_of_one, const int side_of_zero, const int ordinary_side, const Operator node_op)
+{
+    if (node_op == MUL && side_of_zero != HOLLOW)
+        return true;
+
+    if (node_op == POW && side_of_zero == LEFT_SON)
+        return true;
+
+    return false;
+}
+
+static bool expressionEqualsOne(const int side_of_one, const int side_of_zero, const int ordinary_side, const Operator node_op)
+{
+    if (node_op == POW && side_of_one == LEFT_SON)
+        return true;
+
+    if (node_op == POW && side_of_zero == RIGHT_SON)
+        return true;
+
+    return false;
+}
+
+Exp_node * processOneZeroCases(Exp_node *node)
+{
+    if (!node)
+        return node;
+
+    // if (!node->l_son || !node->r_son)
+    //     return node;
+
+    int side_of_one  = equalsOne(node);
+    int side_of_zero = equalsZero(node);
+
+    if (side_of_zero == HOLLOW && side_of_one == HOLLOW)
+        return node;
+    
+    int ordinary_side = HOLLOW;
+    
+    if (side_of_zero == HOLLOW)
+    {
+        ordinary_side = (side_of_zero + 1) % 2;
+
+    } else{
+        
+        ordinary_side = (side_of_one + 1) % 2;
+    }
+
+
+#ifdef DEBUG
+    dumpExpNode(node);
+    printf("\nside_of_one = %d side_of_zero = %d ordinary_side = %d\n", side_of_one, side_of_zero, ordinary_side);
+    printf("operation value %c\n", node->value.op_value);
+#endif    
+
+    bool node_becomes_num = false;
+
+    Value val = {};
+    Exp_node * new_node = node;
+
+    bool eq_exp = expressionEqualsOrdinary(side_of_one, side_of_zero, ordinary_side, node->value.op_value);
+    bool eq_one = expressionEqualsOne(side_of_one, side_of_zero, ordinary_side, node->value.op_value);
+    bool eq_zero = expressionEqualsZero(side_of_one, side_of_zero, ordinary_side, node->value.op_value);
+
+    // printf("eq exp %d, eq one %d, eq zero %d\n", eq_exp, eq_one, eq_one);
+
+    if (eq_exp)
+    {
+
+        switch (ordinary_side)
+        {
+            case LEFT_SON:
+            {
+                new_node = node->l_son;
+                node->l_son = nullptr;
+                break;
+            }
+            case RIGHT_SON:
+            {
+                new_node = node->r_son;
+                node->r_son = nullptr;
+                break;            
+            }
+
+        }        
+
+        if (node->parent)
+        {
+            linkToParent(node->parent, new_node);
+        }
+
+        nodeDtor(node);
+
+    }else if (eq_one)
+    {
+
+        node_becomes_num = true;
+        val.dbl_value = 1;
+
+    }else if(eq_zero)
+    {
+
+        node_becomes_num = true;
+        val.dbl_value = 0;
+
+    }
+
+    if (node_becomes_num)
+    {
+        new_node = createNode(NUM, val, NULL, NULL);
+        
+        if (node->parent)
+        {
+            linkToParent(node->parent, new_node);
+        }
+
+        nodeDtor(node);
+
+    }
+
+    return new_node;
+}
 
 int parseTerminalNode(Exp_node *exp_node, const char * parsing_start, size_t parsing_length)
 {

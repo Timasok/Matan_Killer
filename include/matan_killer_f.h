@@ -7,7 +7,6 @@
 const int MAX_FUNC_NUMBER = 20; 
 const int MAGIC_NUMBER_THAT_STANDS_FOR_ARITHM = -1;
 
-
 struct  Lex_sub
 {
     char *initial;
@@ -19,6 +18,9 @@ int LexDtor(Lex_sub *lex);
 Lex_sub * getLexicalSubstitusions();
 
 char * replaceFuncNames(const char * input);
+
+son equalsZero(Exp_node *node);
+son equalsOne(Exp_node *node);
 
 Operator isOp(int symbol);
 bool isTerminal(Exp_node *node);
@@ -34,6 +36,7 @@ Exp_node * differentiate(const Exp_node *exp_node);
 Exp_node * simplifyTree(Exp_node *node);
 
 Exp_node * rollUpTree(Exp_node *node);
+Exp_node * processOneZeroCases(Exp_node *node);
 
 int diffNode(const Exp_node *argument, Exp_node * result, const char linking_side_in_copy, const char src_side);
 int copyNode(const Exp_node *argument, Exp_node * result, const char linking_side_in_copy, const char src_side);

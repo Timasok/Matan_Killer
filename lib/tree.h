@@ -16,8 +16,9 @@ struct Node
 
 enum son
 {
-    LEFT_SON  = 0,
-    RIGHT_SON = 1,
+    LEFT_SON   = 0,
+    RIGHT_SON  = 1,
+    HOLLOW = -1,
 };
 
 enum Node_type

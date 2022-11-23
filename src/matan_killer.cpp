@@ -20,8 +20,8 @@ int main()
     printIn(func->l_son);
     printf("\n");
     treeDump(func->l_son);
-    
-/*
+
+   
     Exp_node * simplified = simplifyTree(func->l_son); 
 
     treeDump(simplified);
@@ -29,10 +29,11 @@ int main()
     printIn(simplified);
     printf("\n");
 
+    dumpExpNode(simplified);
     nodeDtor(simplified);
 
-*/
-    Exp_node * diff_func = differentiate(func->l_son);
+
+/*    Exp_node * diff_func = differentiate(func->l_son);
     // Exp_node * diff_func = copy(func->l_son);
     
     treeDump(diff_func);
@@ -42,6 +43,7 @@ int main()
 
     nodeDtor(diff_func);
     free(diff_func);// because we create null node that we link everything with
+*/
 
     nodeDtor(func);
     free(func);
