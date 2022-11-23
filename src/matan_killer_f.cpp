@@ -88,12 +88,26 @@ char * replaceFuncNames(const char * input)
         if (lex[idx].initial == nullptr)
             break;
 
-        //compare only lower symbols
+
+        size_t initial_len = strlen(lex[idx].initial);
+
         searched = strstr(input, lex[idx].initial);
+
+        if (searched == nullptr && lex[idx].initial != NULL)
+        {
+            char * initial_copy = strdup(lex[idx].initial);
+
+            for (int counter = 0; counter < initial_len; counter++)
+            {
+                initial_copy[counter] = tolower(lex[idx].initial[counter]);
+            }
+
+            searched = strstr(input, initial_copy);
+            free(initial_copy);
+        }
 
         if (searched != nullptr)
         {
-            size_t initial_len = strlen(lex[idx].initial);
             size_t parsed_len = strlen(lex[idx].parsed);
             size_t input_len  = strlen(input);
 
@@ -296,7 +310,6 @@ bool hasNumSons(Exp_node *node)
 
 Exp_node * simplifyTree(Exp_node *node)
 {
-
     Exp_node * result = node;
 
     if (!node) 
@@ -619,7 +632,13 @@ Exp_node * differentiate(const Exp_node *node)
     #ifdef DEBUG
         dumpExpNode(new_node);
     #endif
-    return new_node;
+
+    // return new_node;
+
+    printIn(new_node);
+    printf("\n");
+
+    return simplifyTree(new_node);
 }
 
 int diffNode(const Exp_node *argument, Exp_node * result, const char linking_side_in_copy, const char src_side)
