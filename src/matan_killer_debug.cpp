@@ -46,7 +46,7 @@ int openLogs()
     fflush(log);
     fprintf(log, "<pre>");
 
-    return 1;
+    return 0;
 
 }
 
@@ -55,7 +55,7 @@ int closeLogs()
    fprintf(log, "\n</pre>");
    fclose(log);
 
-   return 1;
+   return 0;
 }
 
 int getDumpNumber()
@@ -175,13 +175,35 @@ int makeDot(Exp_node *exp_node)
 
 }
 
-int treeDump(Exp_node * exp_node)
+int treeDump(Exp_node *node , const char *name_of_file, const char *name_of_func, int number_of_line)
 {
+    // graphDumpDot(list);
     nodeNumber = 0;
-    makeDot(exp_node);
+    makeDot(node);
+
     system(dump_comand);
+
+    fprintf(log, "<h2>Dump No. %d\n", pic_number-1);
+    fprintf(log, "\t\tDUMP CALLED at file: %s func: %s line: %d\n<h2>", name_of_file, name_of_func, number_of_line);
+    fprintf(log, "\n<hr>\n<img src = graph_dumps/dump_%d.jpeg>\n", getDumpNumber());
 
     return 0;
 }
 
+int treeDump(Exp_node *node , const char * operation_info, const char *name_of_file, const char *name_of_func, int number_of_line)
+{
+    // graphDumpDot(list);
+    nodeNumber = 0;
+    makeDot(node);
+
+    system(dump_comand);
+
+    fprintf(log, "<h2>Dump No. %d\n", pic_number-1);
+    fprintf(log, "\t\tDUMP CALLED at file: %s func: %s line: %d\n<h2>", name_of_file, name_of_func, number_of_line);
+    fprintf(log, "\t\tOPERATION INFO %s<h2>", operation_info);
+
+    fprintf(log, "\n<hr>\n<img src = graph_dumps/dump_%d.jpeg>\n", getDumpNumber());
+
+    return 0;
+}
 #undef PRINT_DOT

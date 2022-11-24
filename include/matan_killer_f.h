@@ -36,8 +36,9 @@ int parseTerminalNode(Exp_node *exp_node, const char * parsing_start, size_t par
 Exp_node * differentiate(const Exp_node *exp_node);
 
 Exp_node * simplifyTree(Exp_node *node);
-Exp_node * computeConstants(Exp_node *node);
+Exp_node * simplifyTreeRolls(Exp_node *node);
 Exp_node * wrapEquivalents(Exp_node *node);
+Exp_node * computeConstants(Exp_node *node);
 
 Exp_node * rollUpTree(Exp_node *node);
 Exp_node * processOneZeroCases(Exp_node *node);

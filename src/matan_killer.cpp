@@ -8,6 +8,8 @@
 
 int main()
 {
+    openLogs();
+
     Exp_node * func = nodeCtor();
     
     Text_info text = {};
@@ -19,12 +21,12 @@ int main()
     getExpression(&text, func);
     printIn(func->l_son);
     printf("\n");
-    treeDump(func->l_son);
+    TREE_DUMP(func->l_son);
 
     Exp_node * simplified = func->l_son;
     simplified = simplifyTree(simplified);
 
-    treeDump(simplified);
+    TREE_DUMP_OPTIONAL(simplified, "simplified");
 
     printIn(simplified);
     printf("\n");
@@ -35,7 +37,7 @@ int main()
 /*    Exp_node * diff_func = differentiate(func->l_son);
     // Exp_node * diff_func = copy(func->l_son);
     
-    treeDump(diff_func);
+    TREE_DUMP(diff_func);
 
     printIn(diff_func);
     printf("\n");
@@ -48,6 +50,8 @@ int main()
     free(func);
     
     textDtor(&text);
+
+    closeLogs();
 
     return 0;
 }

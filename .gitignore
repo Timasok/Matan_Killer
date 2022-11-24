@@ -32,8 +32,10 @@
 *.app
 
 
-./graph_dumps/**
-./thrash/**
-./tests/**
+./graph_dumps/*
+./thrash/*
+./tests/*
 
 .vscode/**
+
+*.input

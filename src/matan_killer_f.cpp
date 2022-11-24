@@ -379,10 +379,10 @@ Exp_node * simplifyTree(Exp_node *node)
     do {    
         
         old_node = node;
-        node = wrapEquivalents(node);    
-        treeDump(node);
-        node = computeConstants(node);
-        treeDump(node);
+        wrapEquivalents(node);    
+        TREE_DUMP(node);
+        computeConstants(node);
+        TREE_DUMP(node);
 
     } while (node != old_node);
     
@@ -411,7 +411,7 @@ Exp_node * computeConstants(Exp_node *node)
     {
         Exp_node *left_result = computeConstants(node->l_son);
         
-        if (result->l_son != left_result)
+        if (node->l_son != left_result)
         {
             result->l_son = left_result;
             linkToParent(result, left_result);
@@ -422,12 +422,14 @@ Exp_node * computeConstants(Exp_node *node)
     {
         Exp_node *right_result = computeConstants(node->r_son);
         
-        if (result->r_son != right_result)
+        if (node->r_son != right_result)
         {
             result->r_son = right_result;
             linkToParent(result, right_result);
         }
     }
+
+    node = result;
 
     return result;
 
@@ -444,52 +446,59 @@ Exp_node * wrapEquivalents(Exp_node *node)
     {
         return result;
     }
-//    && (isEitherZeroOrOne(node->l_son) || isEitherZeroOrOne(node->r_son))
-    if (node->type == OP && hasSons(node))
+
+    if (node->type == OP)
     {
-
-#ifdef DEBUG
-        printf("\nwe should've simplified this node");
-        dumpExpNode(node);
-#endif
-        Exp_node * res = processOneZeroCases(node);
-
-#ifdef DEBUG
-        printf("old node = %p, new node = %p\n", node, res);
-#endif
-        if (res != node)
+    
+        if (hasSons(node))
         {
 
-#ifdef DEBUG
-            printf("we simplified this node\n");
-#endif            
-            return res;            
+    #ifdef DEBUG
+            printf("\nwe should've simplified this node");
+            dumpExpNode(node);
+    #endif
+            Exp_node * res = processOneZeroCases(node);
+
+    #ifdef DEBUG
+            printf("old node = %p, new node = %p\n", node, res);
+    #endif
+            if (res != node)
+            {
+
+    #ifdef DEBUG
+                printf("we simplified this node\n");
+    #endif            
+                node = res;
+                return res;            
+            }
+            
         }
-        
-    }
-        
-    if (node->l_son)
-    {
-        Exp_node *left_result = wrapEquivalents(node->l_son);
-        
-        if (result->l_son != left_result)
+            
+        if (node->l_son)
         {
-            result->l_son = left_result;
-            linkToParent(result, left_result);
+            Exp_node *left_result = wrapEquivalents(node->l_son);
+
+            if (result->l_son != left_result)
+            {
+                result->l_son = left_result;
+                linkToParent(result, left_result);
+            }
         }
+
+        if (node->r_son)
+        {
+            Exp_node *right_result = wrapEquivalents(node->r_son);
+            
+            if (result->r_son != right_result)
+            {
+                result->r_son = right_result;
+                linkToParent(result, right_result);
+            }
+        }
+
     }
 
-    if (node->r_son)
-    {
-        Exp_node *right_result = wrapEquivalents(node->r_son);
-        
-        if (result->r_son != right_result)
-        {
-            result->r_son = right_result;
-            linkToParent(result, right_result);
-        }
-    }
-
+    node = result;
     return result;
 
 }
