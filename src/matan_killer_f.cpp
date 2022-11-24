@@ -9,6 +9,17 @@
 #include "matan_killer_debug.h"
 #include "dsl.h"
 
+const double EPS = 0.00001;
+
+static bool equals(const double num_1, const double num_2)
+{
+    if (abs(num_1 - num_2) < EPS)
+        return true;
+
+    return false;
+
+}
+
 static Exp_node * createNum(int number)
 {
     Value val = {};
@@ -251,7 +262,7 @@ int readExpression(Exp_node * exp_node, const char * input, size_t shift, int fr
     {
 
         Exp_node * new_node = nodeConnect(exp_node, free_port);
-        readExpression(new_node, input, shift + 1, LEFT_SON);//TODO спорный мяч
+        readExpression(new_node, input, shift + 1, free_port);//TODO спорный мяч
 
     }else{
     
@@ -278,12 +289,24 @@ Operator isOp(int symbol)
     return result;
 }
 
+static bool isEitherZeroOrOne(Exp_node *node)
+{
+    if (equalsZero(node) != HOLLOW || equalsOne(node) != HOLLOW)
+    {
+        return true;
+    }else
+    {
+        return false;
+    }
+    
+}
+
 son equalsZero(Exp_node *node)
 {
-    if (node->l_son->type == NUM && node->l_son->value.dbl_value == 0)
+    if (node->l_son->type == NUM && equals(node->l_son->value.dbl_value,0))
         return LEFT_SON;
 
-    if (node->r_son->type == NUM && node->r_son->value.dbl_value == 0)
+    if (node->r_son->type == NUM && equals(node->r_son->value.dbl_value, 0))
         return RIGHT_SON;
 
     return HOLLOW;
@@ -291,10 +314,10 @@ son equalsZero(Exp_node *node)
 
 son equalsOne(Exp_node *node)
 {
-    if (node->l_son->type == NUM && node->l_son->value.dbl_value == 1)
+    if (node->l_son->type == NUM && equals(node->l_son->value.dbl_value, 1))
         return LEFT_SON;
 
-    if (node->r_son->type == NUM && node->r_son->value.dbl_value == 1)
+    if (node->r_son->type == NUM && equals(node->r_son->value.dbl_value, 1))
         return RIGHT_SON;
 
     return HOLLOW;
@@ -318,6 +341,21 @@ bool isTerminal(Exp_node *node)
 
 }
 
+bool hasSons(Exp_node *node)
+{
+    //todo add soft assert
+    assert(!isTerminal(node));
+
+    if (node->l_son && node->r_son)
+    {
+        return true;
+
+    } else {
+
+        return false;
+    }
+}
+
 bool hasNumSons(Exp_node *node)
 {
     //todo add soft assert
@@ -335,56 +373,43 @@ bool hasNumSons(Exp_node *node)
 
 Exp_node * simplifyTree(Exp_node *node)
 {
+
+    Exp_node * old_node = nullptr;
+
+    do {    
+        
+        old_node = node;
+        node = wrapEquivalents(node);    
+        treeDump(node);
+        node = computeConstants(node);
+        treeDump(node);
+
+    } while (node != old_node);
+    
+    return node;
+}
+
+Exp_node * computeConstants(Exp_node *node)
+{
     Exp_node * result = node;
 
     if (!node) 
         return result;
 
     if (node->type == VAR)
-    {
-       return result;
+    {   
+        return result;
     }
-
-    // while (node->type == OP && hasNumSons(node))
-    // {
-    //     Exp_node * node_old = node;
-        
-    //     dumpExpNode(node);
-
-    //     node = rollUpTree(node);
-    //     node = processOneZeroCases(node);
-
-    //     if(node == node_old)
-    //         return node;
-    // }
-//
+   
     if (node->type == OP && hasNumSons(node))
     {
-        // Exp_node * tmp = rollUpTree(node);
-        return processOneZeroCases(node);
-
+        return rollUpTree(node);
+                
     }
-
-    // if (node->type == OP && hasNumSons(node))
-    // {
-    //     // Exp_node * tmp_old = tmp;
-    //     dumpExpNode(node);
-
-    //     Exp_node * tmp = rollUpTree(node);
-     
-    //     dumpExpNode(tmp);
-
-    //     tmp = processOneZeroCases(tmp);   
-
-    //     dumpExpNode(tmp);
-
-    //     return tmp;
-
-    // }
-
+        
     if (node->l_son)
     {
-        Exp_node *left_result = simplifyTree(node->l_son);
+        Exp_node *left_result = computeConstants(node->l_son);
         
         if (result->l_son != left_result)
         {
@@ -395,7 +420,68 @@ Exp_node * simplifyTree(Exp_node *node)
 
     if (node->r_son)
     {
-        Exp_node *right_result = simplifyTree(node->r_son);
+        Exp_node *right_result = computeConstants(node->r_son);
+        
+        if (result->r_son != right_result)
+        {
+            result->r_son = right_result;
+            linkToParent(result, right_result);
+        }
+    }
+
+    return result;
+
+}
+
+Exp_node * wrapEquivalents(Exp_node *node)
+{
+    Exp_node * result = node;
+
+    if (!node) 
+        return result;
+
+    if (node->type == VAR)
+    {
+        return result;
+    }
+//    && (isEitherZeroOrOne(node->l_son) || isEitherZeroOrOne(node->r_son))
+    if (node->type == OP && hasSons(node))
+    {
+
+#ifdef DEBUG
+        printf("\nwe should've simplified this node");
+        dumpExpNode(node);
+#endif
+        Exp_node * res = processOneZeroCases(node);
+
+#ifdef DEBUG
+        printf("old node = %p, new node = %p\n", node, res);
+#endif
+        if (res != node)
+        {
+
+#ifdef DEBUG
+            printf("we simplified this node\n");
+#endif            
+            return res;            
+        }
+        
+    }
+        
+    if (node->l_son)
+    {
+        Exp_node *left_result = wrapEquivalents(node->l_son);
+        
+        if (result->l_son != left_result)
+        {
+            result->l_son = left_result;
+            linkToParent(result, left_result);
+        }
+    }
+
+    if (node->r_son)
+    {
+        Exp_node *right_result = wrapEquivalents(node->r_son);
         
         if (result->r_son != right_result)
         {
@@ -442,7 +528,7 @@ Exp_node * rollUpTree(Exp_node *node)
 
 #undef DEF_OP
 
-static bool expressionEqualsOrdinary(const int side_of_one, const int side_of_zero, const int ordinary_side, const Operator node_op)
+static bool expressionEqualsConjugate(const int side_of_one, const int side_of_zero, const int conjugate_side, const Operator node_op)
 {
     if (node_op == MUL && side_of_one != HOLLOW)
         return true;
@@ -462,7 +548,7 @@ static bool expressionEqualsOrdinary(const int side_of_one, const int side_of_ze
     return false;
 }
 
-static bool expressionEqualsZero(const int side_of_one, const int side_of_zero, const int ordinary_side, const Operator node_op)
+static bool expressionEqualsZero(const int side_of_one, const int side_of_zero, const int conjugate_side, const Operator node_op)
 {
     if (node_op == MUL && side_of_zero != HOLLOW)
         return true;
@@ -470,10 +556,13 @@ static bool expressionEqualsZero(const int side_of_one, const int side_of_zero, 
     if (node_op == POW && side_of_zero == LEFT_SON)
         return true;
 
+    if (node_op == DIV && side_of_zero == LEFT_SON)
+        return true;
+
     return false;
 }
 
-static bool expressionEqualsOne(const int side_of_one, const int side_of_zero, const int ordinary_side, const Operator node_op)
+static bool expressionEqualsOne(const int side_of_one, const int side_of_zero, const int conjugate_side, const Operator node_op)
 {
     if (node_op == POW && side_of_one == LEFT_SON)
         return true;
@@ -489,48 +578,46 @@ Exp_node * processOneZeroCases(Exp_node *node)
     if (!node)
         return node;
 
-    // if (!node->l_son || !node->r_son)
-    //     return node;
-
     int side_of_one  = equalsOne(node);
     int side_of_zero = equalsZero(node);
 
     if (side_of_zero == HOLLOW && side_of_one == HOLLOW)
         return node;
     
-    int ordinary_side = HOLLOW;
+    int conjugate_side = HOLLOW;
     
-    if (side_of_zero == HOLLOW)
+    if (side_of_zero != HOLLOW)
     {
-        ordinary_side = (side_of_zero + 1) % 2;
+        conjugate_side = (side_of_zero + 1) % 2;
 
-    } else{
+    } else if (side_of_one != HOLLOW)
+    {
         
-        ordinary_side = (side_of_one + 1) % 2;
+        conjugate_side = (side_of_one + 1) % 2;
     }
 
-
 #ifdef DEBUG
+
     dumpExpNode(node);
-    printf("\nside_of_one = %d side_of_zero = %d ordinary_side = %d\n", side_of_one, side_of_zero, ordinary_side);
+    printf("\nside_of_one = %d side_of_zero = %d conjugate_side = %d\n", side_of_one, side_of_zero, conjugate_side);
     printf("operation value %c\n", node->value.op_value);
-#endif    
+#endif  
 
     bool node_becomes_num = false;
 
     Value val = {};
     Exp_node * new_node = node;
 
-    bool eq_exp = expressionEqualsOrdinary(side_of_one, side_of_zero, ordinary_side, node->value.op_value);
-    bool eq_one = expressionEqualsOne(side_of_one, side_of_zero, ordinary_side, node->value.op_value);
-    bool eq_zero = expressionEqualsZero(side_of_one, side_of_zero, ordinary_side, node->value.op_value);
+    bool eq_exp = expressionEqualsConjugate(side_of_one, side_of_zero, conjugate_side, node->value.op_value);
+    bool eq_one = expressionEqualsOne(side_of_one, side_of_zero, conjugate_side, node->value.op_value);
+    bool eq_zero = expressionEqualsZero(side_of_one, side_of_zero, conjugate_side, node->value.op_value);
 
     // printf("eq exp %d, eq one %d, eq zero %d\n", eq_exp, eq_one, eq_one);
 
     if (eq_exp)
     {
 
-        switch (ordinary_side)
+        switch (conjugate_side)
         {
             case LEFT_SON:
             {
@@ -837,7 +924,9 @@ Exp_node * differentiate(const Exp_node *node)
     printIn(new_node);
     printf("\n");
 
-    return simplifyTree(new_node);
+    return new_node;
+
+    // return simplifyTree(new_node);
 }
 
 int diffNode(const Exp_node *argument, Exp_node * result, const char linking_side_in_copy, const char src_side)

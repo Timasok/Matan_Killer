@@ -117,13 +117,13 @@ int printText(Text_info * text)
     return 0;
 }
 
-Var_Info *createVarInfo(const char * name_of_var, const char * name_of_file, const char * name_of_func, int number_of_line)
-{
-    Var_Info var_info =  {.name_of_var  = name_of_var, .name_of_file = name_of_file,
-                     .name_of_func = name_of_func, .number_of_line  = number_of_line};
+// Var_Info *createVarInfo(const char * name_of_var, const char * name_of_file, const char * name_of_func, int number_of_line)
+// {
+//     Var_Info var_info =  {.name_of_var  = name_of_var, .name_of_file = name_of_file,
+//                      .name_of_func = name_of_func, .number_of_line  = number_of_line};
 
-    return &var_info;
-}
+//     return &var_info;
+// }
 
 int printVarInfo(Var_Info *var_info)
 {

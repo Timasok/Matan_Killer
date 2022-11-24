@@ -45,6 +45,6 @@ int printText(Text_info * text);
 
 int stringDump(const char *string, const char * name_of_var, const char * name_of_file, const char * name_of_func, int number_of_line);
 
-Var_Info *createVarInfo(const char * name_of_var, const char * name_of_file, const char * name_of_func, int number_of_line);
+// Var_Info *createVarInfo(const char * name_of_var, const char * name_of_file, const char * name_of_func, int number_of_line);
 
 #endif

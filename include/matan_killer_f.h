@@ -25,6 +25,7 @@ son equalsOne(Exp_node *node);
 Operator isOp(int symbol);
 bool isTerminal(Exp_node *node);
 bool hasNumSons(Exp_node *node);
+bool hasSons(Exp_node *node);
 
 int getExpression(Text_info *text, Exp_node *main_node);
 
@@ -33,7 +34,10 @@ int readExpression(Exp_node *exp_node, const char * remainder, size_t shift, int
 int parseTerminalNode(Exp_node *exp_node, const char * parsing_start, size_t parsing_length);
 
 Exp_node * differentiate(const Exp_node *exp_node);
+
 Exp_node * simplifyTree(Exp_node *node);
+Exp_node * computeConstants(Exp_node *node);
+Exp_node * wrapEquivalents(Exp_node *node);
 
 Exp_node * rollUpTree(Exp_node *node);
 Exp_node * processOneZeroCases(Exp_node *node);

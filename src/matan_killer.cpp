@@ -21,15 +21,14 @@ int main()
     printf("\n");
     treeDump(func->l_son);
 
-   
-    Exp_node * simplified = simplifyTree(func->l_son); 
+    Exp_node * simplified = func->l_son;
+    simplified = simplifyTree(simplified);
 
     treeDump(simplified);
 
     printIn(simplified);
     printf("\n");
 
-    dumpExpNode(simplified);
     nodeDtor(simplified);
 
 
