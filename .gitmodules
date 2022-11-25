@@ -1,0 +1,3 @@
+[submodule "lib/calc"]
+	path = lib/calc
+	url = git@github.com:Timasok/Matan_Killer.git
