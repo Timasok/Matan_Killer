@@ -8,7 +8,8 @@
 #include "calc_f.h"
 
 int main()
-{
+{   
+    openLogs();
     Text_info text1 = {};
     
     textCtor(&text1, "expression.input");
@@ -21,14 +22,17 @@ int main()
     printIn(result);
     printf("\n");
 
-    // TREE_DUMP(result);
+    TREE_DUMP(result);
 
-    // nodeDtor(result);
+    nodeDtor(result);
+    free(result);
 
     textDtor(&text1);
+
+    closeLogs();
 /*
 // {
-//     openLogs();
+//     
 
 //     Text_info text = {};   
 //     textCtor(&text, "expression.input");
@@ -88,7 +92,7 @@ int main()
     
 //     textDtor(&text);
 
-//     closeLogs();
+
 // }
 */    
     return 0;

@@ -260,6 +260,8 @@ int nodeDtor(Exp_node *node)
         nodeDtor(node->r_son);
     }
 
+    
+    
     return 0;
 }
 
