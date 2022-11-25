@@ -156,6 +156,25 @@
                 linkSonsToParent(new_node->r_son->l_son);                                           \
         } while(0)                                                                                  \
 
+#define mRR(linking_side, number)                                                                   \
+        do{                                                                                         \
+                switch (linking_side)                                                               \
+                {                                                                                   \
+                        case LEFT_SON:                                                              \
+                                new_node->r_son->r_son->l_son = createNum(number);                  \
+                                break;                                                              \
+                        case RIGHT_SON:                                                             \
+                                new_node->r_son->r_son->r_son = createNum(number);                  \
+                                break;                                                              \
+                        default:                                                                    \
+                                DBG_OUT;                                                            \
+                                break;                                                              \
+                }                                                                                   \
+                                                                                                    \
+                linkSonsToParent(new_node->r_son->r_son);                                           \
+        } while(0)                                                                                  \
+
+
 #define mLR(linking_side, number)                                                                   \
         do{                                                                                         \
                 switch (linking_side)                                                               \

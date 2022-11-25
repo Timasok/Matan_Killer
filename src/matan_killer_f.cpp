@@ -20,7 +20,7 @@ static bool equals(const double num_1, const double num_2)
 
 }
 
-static Exp_node * createNum(int number)
+Exp_node * createNum(double number)
 {
     Value val = {};
     val.dbl_value = number;
@@ -374,21 +374,25 @@ bool hasNumSons(Exp_node *node)
     }
 }
 
+//DOESN'T WORK MTHF
 Exp_node * simplifyTree(Exp_node *node)
 {
 
     Exp_node * old_node = nullptr;
+    Exp_node * copy_node = copy(node);
 
     do {    
         
-        old_node = node;
-        node = wrapEquivalents(node);    
+        old_node = copy_node;
+        wrapEquivalents(copy_node);    
         
-        node = computeConstants(node);
+        computeConstants(copy_node);
 
-    } while (node != old_node);
-    
-    return node;
+    } while (copy_node != old_node);
+
+    nodeDtor(node);
+
+    return copy_node;
 }
 
 Exp_node * computeConstants(Exp_node *node)
@@ -409,7 +413,7 @@ Exp_node * computeConstants(Exp_node *node)
                 
     }else {
 
-        TREE_DUMP_OPTIONAL(node, "not rolled up");
+        // TREE_DUMP_OPTIONAL(node, "not rolled up");
     
     }
         
@@ -767,7 +771,7 @@ Exp_node * differentiate(const Exp_node *node)
                     d(RIGHT_SON, RIGHT_SON);
 
                     // TREE_DUMP_OPTIONAL(new_node, "SUB/ADD DUMP");
-//TODO add dump for operations
+                    //TODO add dump for operations
                     break;
 
                 }
@@ -924,7 +928,18 @@ Exp_node * differentiate(const Exp_node *node)
                 }
                 case TAN:
                 {
-                    
+                    makeOp(DIV);
+
+                    d(LEFT_SON, RIGHT_SON);
+                    rightOp(POW);
+
+                    right_left_Op(COS);
+                    mR(RIGHT_SON, 2);
+
+                    cRL(RIGHT_SON, RIGHT_SON);
+                    mRL(LEFT_SON, 0);
+
+                    TREE_DUMP_OPTIONAL(new_node, "tan");
                     break;
                 }
                 default:
@@ -939,12 +954,10 @@ Exp_node * differentiate(const Exp_node *node)
         dumpExpNode(new_node);
     #endif
 
+    // printf("before simplifying %p\n", new_node);
+
     return new_node;
 
-    // printIn(new_node);
-    // printf("\n");
-
-    // return simplifyTree(new_node);
 }
 
 int diffNode(const Exp_node *argument, Exp_node * result, const char linking_side_in_copy, const char src_side)
@@ -955,7 +968,7 @@ int diffNode(const Exp_node *argument, Exp_node * result, const char linking_sid
     {
         case LEFT_SON:
 
-            node = differentiate(argument->l_son);         
+            node = differentiate(argument->l_son); 
             break;
 
         case RIGHT_SON:

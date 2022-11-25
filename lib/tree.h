@@ -75,6 +75,7 @@ struct Exp_node
 Exp_node * nodeConnect(Exp_node *parent, const char dest);
 Exp_node * nodeCtor();
 Exp_node * createNode(Node_type type, Value value, Exp_node * l_son, Exp_node * r_son);
+Exp_node * createNum(double number);
 
 int linkToParent(Exp_node *parent, Exp_node *orphan);
 int linkSonsToParent(Exp_node *node);

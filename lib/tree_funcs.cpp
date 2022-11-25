@@ -97,7 +97,7 @@ Exp_node * copy(Exp_node * node)
     copyNodeData(node, new_node);
 
 #ifdef DEBUG
-    dumpExpNode(new_node);
+    (new_node);
 #endif
 
     return new_node;

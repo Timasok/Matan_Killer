@@ -31,10 +31,11 @@
 *.out
 *.app
 
+*.jpeg
 
-./graph_dumps/*
-./thrash/*
-./tests/*
+./graph_dumps/**
+./thrash/**
+./tests/**
 
 
 .vscode/**
