@@ -36,7 +36,7 @@ Exp_node * nodeCtor()
     return (Exp_node *)calloc(1, sizeof(Exp_node));
 }
 
-Exp_node * copy(Exp_node * node)
+/* Exp_node * copy(Exp_node * node)
 {
     if (!node)
         return nullptr;
@@ -64,14 +64,52 @@ Exp_node * copy(Exp_node * node)
     return new_node;
 
 }
+*/
+
+//TODO clear
+Exp_node * copy(Exp_node * node)
+{
+    if (!node)
+        return nullptr;
+    
+    Exp_node *new_node = nodeCtor();
+
+    copyNodeData(node, new_node);
+
+#ifdef DEBUG
+    dumpExpNode(new_node);
+#endif
+
+    return new_node;
+
+}
 
 int copyNodeData(const Exp_node *src_node, Exp_node *dest_node)
 {
     if (src_node == nullptr || dest_node == nullptr)
         return -1;
 
+
     dest_node->type = src_node->type;
     dest_node->value = src_node->value;
+
+    if (src_node->l_son)
+    {
+        nodeConnect(dest_node, LEFT_SON);
+        copyNodeData(src_node->l_son, dest_node->l_son);
+        dest_node->l_son->parent = dest_node;
+    }
+
+    if (src_node->r_son)
+    {
+        nodeConnect(dest_node, RIGHT_SON);
+        copyNodeData(src_node->r_son, dest_node->r_son);
+        dest_node->r_son->parent = dest_node;
+    }
+
+#ifdef DEBUG
+    dumpExpNode(dest_node);
+#endif
 
     return 0;
 

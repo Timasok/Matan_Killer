@@ -5,6 +5,16 @@
 
 const int MAX_BUFFER_LENGTH = 512;
 
+#define ASSERT(condition)                                               \
+    do{                                                                 \
+        if (!condition)                                                 \
+        {                                                               \
+            fprintf(stderr, "%s failed: file: %s func: %s line: %d\n",  \
+                     #condition, __FILE__, __FUNCTION__, __LINE__);     \
+        }                                                               \
+    } while(0)                                                          \
+
+
 struct Node
 {
     const char *data;

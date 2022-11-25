@@ -12,17 +12,38 @@ int main()
 
     Exp_node * func = nodeCtor();
     
-    Text_info text = {};
-    
+    Text_info text = {};   
     textCtor(&text, "expression.input");
-
     printText(&text);
 
     getExpression(&text, func);
+
     printIn(func->l_son);
     printf("\n");
-    TREE_DUMP(func->l_son);
 
+    TREE_DUMP(func->l_son);
+    
+    Exp_node *copy_func = copy(func->l_son);
+
+    TREE_DUMP(copy_func);
+        
+    printIn(copy_func);
+    printf("\n");
+
+    nodeDtor(copy_func);
+    free(copy_func);
+
+    nodeDtor(func);
+    free(func);
+
+    textDtor(&text);
+
+    closeLogs();
+
+    return 0;
+}
+
+/*
     Exp_node * simplified = func->l_son;
     simplified = simplifyTree(simplified);
 
@@ -33,25 +54,20 @@ int main()
 
     nodeDtor(simplified);
 
+*/
+/*
+    Exp_node * diff_func = differentiate(func->l_son);
 
-/*    Exp_node * diff_func = differentiate(func->l_son);
-    // Exp_node * diff_func = copy(func->l_son);
+    TREE_DUMP_OPTIONAL(diff_func, "after differenriate");
+
+    printIn(diff_func);
+    printf("\n");
+
+    diff_func = simplifyTree(diff_func);
     
-    TREE_DUMP(diff_func);
-
     printIn(diff_func);
     printf("\n");
 
     nodeDtor(diff_func);
     free(diff_func);// because we create null node that we link everything with
 */
-
-    nodeDtor(func);
-    free(func);
-    
-    textDtor(&text);
-
-    closeLogs();
-
-    return 0;
-}

@@ -36,6 +36,8 @@
 ./thrash/*
 ./tests/*
 
+
 .vscode/**
 
+*.htm
 *.input

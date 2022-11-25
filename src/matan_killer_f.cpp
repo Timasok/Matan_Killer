@@ -358,10 +358,13 @@ bool hasSons(Exp_node *node)
 
 bool hasNumSons(Exp_node *node)
 {
-    //todo add soft assert
-    assert(!isTerminal(node));
+    // ASSERT(!isTerminal(node));
 
-    if (node->l_son->type == NUM && node->r_son->type == NUM)
+    if (isTerminal(node))
+    {
+        return false;
+
+    } else if (node->l_son->type == NUM && node->r_son->type == NUM)
     {
         return true;
 
@@ -379,10 +382,9 @@ Exp_node * simplifyTree(Exp_node *node)
     do {    
         
         old_node = node;
-        wrapEquivalents(node);    
-        TREE_DUMP(node);
-        computeConstants(node);
-        TREE_DUMP(node);
+        node = wrapEquivalents(node);    
+        
+        node = computeConstants(node);
 
     } while (node != old_node);
     
@@ -405,6 +407,10 @@ Exp_node * computeConstants(Exp_node *node)
     {
         return rollUpTree(node);
                 
+    }else {
+
+        TREE_DUMP_OPTIONAL(node, "not rolled up");
+    
     }
         
     if (node->l_son)
@@ -438,11 +444,12 @@ Exp_node * computeConstants(Exp_node *node)
 Exp_node * wrapEquivalents(Exp_node *node)
 {
     Exp_node * result = node;
+    dumpExpNode(node);
 
     if (!node) 
         return result;
 
-    if (node->type == VAR)
+    if (node->type == VAR || node->type == NUM)
     {
         return result;
     }
@@ -464,11 +471,13 @@ Exp_node * wrapEquivalents(Exp_node *node)
     #endif
             if (res != node)
             {
-
+                // node->parent->l_son = nullptr;
+    
     #ifdef DEBUG
                 printf("we simplified this node\n");
     #endif            
-                node = res;
+                // node = res;
+                // res->parent = nullptr;
                 return res;            
             }
             
@@ -499,7 +508,7 @@ Exp_node * wrapEquivalents(Exp_node *node)
     }
 
     node = result;
-    return result;
+    return node;
 
 }
 
@@ -928,12 +937,10 @@ Exp_node * differentiate(const Exp_node *node)
         dumpExpNode(new_node);
     #endif
 
-    // return new_node;
-
-    printIn(new_node);
-    printf("\n");
-
     return new_node;
+
+    // printIn(new_node);
+    // printf("\n");
 
     // return simplifyTree(new_node);
 }
