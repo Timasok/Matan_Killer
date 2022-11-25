@@ -8,7 +8,7 @@
 
 Exp_node * nodeConnect(Exp_node *parent, const char dest)
 {
-    assert(parent != NULL);
+    ASSERT(parent != NULL);
 
 #ifdef DEBUG
     printf("\e[0;31mconnect_called to %p dest %d\e[0m\n", parent, dest);
@@ -27,6 +27,8 @@ Exp_node * nodeConnect(Exp_node *parent, const char dest)
     }
 
     new_node->parent = parent;
+
+    // dumpExpNode(new_node);
     return new_node;
 
 }
@@ -66,7 +68,25 @@ Exp_node * nodeCtor()
 }
 */
 
-//TODO clear
+int copySingle(const Exp_node * node, Exp_node *new_node)
+{
+    if (!node)
+        return -1;
+
+    new_node->type = node->type;
+    new_node->value = node->value;
+
+    new_node->l_son = nullptr;
+    new_node->r_son = nullptr;
+
+#ifdef DEBUG
+    dumpExpNode(new_node);
+#endif
+
+    return 0;
+
+}
+
 Exp_node * copy(Exp_node * node)
 {
     if (!node)
@@ -115,7 +135,6 @@ int copyNodeData(const Exp_node *src_node, Exp_node *dest_node)
 
 }
 
-//TODO add assert or something
 Exp_node * createNode(Node_type type, Value value, Exp_node * l_son, Exp_node * r_son)
 {
     int error_code = 0;
@@ -132,6 +151,7 @@ Exp_node * createNode(Node_type type, Value value, Exp_node * l_son, Exp_node * 
     new_node->l_son = l_son;
     new_node->r_son = r_son;
 
+    // dumpExpNode(new_node);
     return new_node;
 
 }
@@ -142,6 +162,7 @@ int linkToParent(Exp_node *parent, Exp_node *orphan)
         return -1;
 
     orphan->parent = parent;
+
     return 0;
 
 }

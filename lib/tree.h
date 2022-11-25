@@ -81,6 +81,7 @@ int linkSonsToParent(Exp_node *node);
 
 Exp_node * copy(Exp_node * node);
 int copyNodeData(const Exp_node *src_node, Exp_node *dest_node);
+int copySingle(const Exp_node * node, Exp_node *new_node);
 
 Exp_node * findNode(Exp_node *node, const char *string);//TODO change completely this function do we need her?
 int nodeDtor(Exp_node *node);

@@ -436,7 +436,6 @@ Exp_node * computeConstants(Exp_node *node)
     }
 
     node = result;
-
     return result;
 
 }
@@ -444,7 +443,7 @@ Exp_node * computeConstants(Exp_node *node)
 Exp_node * wrapEquivalents(Exp_node *node)
 {
     Exp_node * result = node;
-    dumpExpNode(node);
+    // dumpExpNode(node);
 
     if (!node) 
         return result;
@@ -745,7 +744,7 @@ Exp_node * differentiate(const Exp_node *node)
         case NUM:
         {
             new_node = createNum(0);
-
+ 
             break;
         }
         case VAR:
@@ -755,18 +754,20 @@ Exp_node * differentiate(const Exp_node *node)
             break;
         }
         case OP:
+        {
             new_node = nodeCtor();
             switch(node->value.op_value)
             {
                 case ADD:
                 case SUB:
                 {
+                    copyOp();
 
                     d(LEFT_SON, LEFT_SON);
                     d(RIGHT_SON, RIGHT_SON);
 
-                    copyOp();
-
+                    // TREE_DUMP_OPTIONAL(new_node, "SUB/ADD DUMP");
+//TODO add dump for operations
                     break;
 
                 }
@@ -931,6 +932,7 @@ Exp_node * differentiate(const Exp_node *node)
                     break;
             }
             break;
+        }
     }
 
     #ifdef DEBUG
@@ -970,6 +972,7 @@ int diffNode(const Exp_node *argument, Exp_node * result, const char linking_sid
     switch (linking_side_in_copy)
     {
         case LEFT_SON:
+
             result->l_son = node;       
             break;
 

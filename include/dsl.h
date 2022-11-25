@@ -196,7 +196,7 @@
 
 #define copyOp()                                                \
         do{                                                     \
-            copyNodeData(node, new_node);                       \
+                copySingle(node, new_node);                     \
         } while(0)     
 
 #define makeOp(operation)                                       \
