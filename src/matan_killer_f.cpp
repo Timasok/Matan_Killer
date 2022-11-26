@@ -20,20 +20,6 @@ static bool equals(const double num_1, const double num_2)
 
 }
 
-Exp_node * createNum(double number)
-{
-    Value val = {};
-    val.dbl_value = number;
-    return createNode(NUM, val, nullptr, nullptr);
-}
-
-static Exp_node * createOp(Operator op)
-{
-    Value val = {};
-    val.op_value = op;
-    return createNode(OP, val, nullptr, nullptr);
-}
-
 #define DEF_OP(op_name, op_code, num, oper)                         \
             else if(counter == num)                                 \
             {                                                       \
@@ -377,84 +363,91 @@ bool hasNumSons(Exp_node *node)
 //DOESN'T WORK MTHF
 Exp_node * simplifyTree(Exp_node *node)
 {
+    ASSERT(node);
 
-    Exp_node * old_node = nullptr;
-    Exp_node * copy_node = copy(node);
+    int changes = 0;
+
+    // Exp_node * copy_node = copy(node);
 
     do {    
+
+        changes = 0;
+        // wrapEquivalents(copy_node);    
         
-        old_node = copy_node;
-        wrapEquivalents(copy_node);    
-        
-        computeConstants(copy_node);
+        changes += computeConstants(node);
+        printf("changes = %d\n");
 
-    } while (copy_node != old_node);
+    } while (changes != 0);
 
-    nodeDtor(node);
+    // nodeDtor(node);
 
-    return copy_node;
+    return node;
 }
 
-Exp_node * computeConstants(Exp_node *node)
+int computeConstants(Exp_node *node)
 {
     Exp_node * result = node;
+    int changes = 0;
 
     if (!node) 
-        return result;
+        return 0;
 
-    if (node->type == VAR)
+    if (node->type == VAR || node->type == NUM)
     {   
-        return result;
+        return 0;
     }
    
     if (node->type == OP && hasNumSons(node))
     {
-        return rollUpTree(node);
-                
-    }else {
+        node = rollUpTree(node);
+        changes++;
 
-        // TREE_DUMP_OPTIONAL(node, "not rolled up");
+    } 
+/**/
+    else
+    {
+        
+        if (node->l_son)
+        {
+            Exp_node *left_result = node->l_son;
+            changes += computeConstants(node->l_son);
+            
+            if (node->l_son != left_result)
+            {
+                result->l_son = left_result;
+                linkToParent(result, left_result);
+            }
+        }
+
+        if (node->r_son)
+        {
+            Exp_node *right_result = node->r_son;
+            changes += computeConstants(node->r_son);
+            
+            if (node->r_son != right_result)
+            {
+                node->r_son = right_result;
+                linkToParent(node, right_result);
+            }
+        }
+
+    }
     
-    }
-        
-    if (node->l_son)
-    {
-        Exp_node *left_result = computeConstants(node->l_son);
-        
-        if (node->l_son != left_result)
-        {
-            result->l_son = left_result;
-            linkToParent(result, left_result);
-        }
-    }
-
-    if (node->r_son)
-    {
-        Exp_node *right_result = computeConstants(node->r_son);
-        
-        if (node->r_son != right_result)
-        {
-            result->r_son = right_result;
-            linkToParent(result, right_result);
-        }
-    }
-
-    node = result;
-    return result;
-
+    return changes;
 }
 
-Exp_node * wrapEquivalents(Exp_node *node)
+int wrapEquivalents(Exp_node *node)
 {
     Exp_node * result = node;
+    int changes = 0;
     // dumpExpNode(node);
 
     if (!node) 
-        return result;
+        return 0;
 
     if (node->type == VAR || node->type == NUM)
     {
-        return result;
+        // return result;
     }
 
     if (node->type == OP)
@@ -481,14 +474,17 @@ Exp_node * wrapEquivalents(Exp_node *node)
     #endif            
                 // node = res;
                 // res->parent = nullptr;
-                return res;            
+                
+                //TODO ! fix mthf
+                // return res;            
             }
             
         }
             
         if (node->l_son)
         {
-            Exp_node *left_result = wrapEquivalents(node->l_son);
+            Exp_node *left_result = node->r_son;
+            wrapEquivalents(node->l_son);
 
             if (result->l_son != left_result)
             {
@@ -499,7 +495,8 @@ Exp_node * wrapEquivalents(Exp_node *node)
 
         if (node->r_son)
         {
-            Exp_node *right_result = wrapEquivalents(node->r_son);
+            Exp_node *right_result = node->r_son;
+            wrapEquivalents(node->r_son);
             
             if (result->r_son != right_result)
             {
@@ -511,16 +508,26 @@ Exp_node * wrapEquivalents(Exp_node *node)
     }
 
     node = result;
-    return node;
+
+    return changes;
 
 }
 
-#define DEF_OP(op_name, op_code, num, oper)                                                 \
-    else if (node->value.op_value == op_code && num == MAGIC_NUMBER_THAT_STANDS_FOR_ARITHM) \
-    {                                                                                       \
-        val.dbl_value = node->l_son->value.dbl_value oper node->r_son->value.dbl_value;     \
-        have_to_roll_up = true;                                                             \
-    }                                                                                       \
+#define DEF_OP(op_name, op_code, num, oper)                                                     \
+    else if (node->value.op_value == op_code)                                                   \
+    {                                                                                           \
+        if (num == MAGIC_NUMBER_THAT_STANDS_FOR_ARITHM)                                         \
+        {                                                                                       \
+            val.dbl_value = node->l_son->value.dbl_value oper node->r_son->value.dbl_value;     \
+            have_to_roll_up = true;                                                             \
+                                                                                                \
+        } else if (num == MAGIC_NUMBER_THAT_STANDS_FOR_POW)                                     \
+        {                                                                                       \
+            val.dbl_value = pow(node->l_son->value.dbl_value, node->r_son->value.dbl_value);    \
+            have_to_roll_up = true;                                                             \
+                                                                                                \
+        }                                                                                       \
+    }
 
 Exp_node * rollUpTree(Exp_node *node)
 {
@@ -533,18 +540,19 @@ Exp_node * rollUpTree(Exp_node *node)
 
     if (have_to_roll_up)
     {
-        new_node = createNode(NUM, val, NULL, NULL);
+        nodeDtor(node->l_son);
+        nodeDtor(node->r_son);
+
+        node->l_son = nullptr;
+        node->r_son = nullptr;
+
+        node->type = NUM;
+
+        node->value = val;
         
-        if (node->parent)
-        {
-            linkToParent(node->parent, new_node);
-        }
-
-        nodeDtor(node);
-
     }
 
-    return new_node;
+    return node;
 }
 
 #undef DEF_OP

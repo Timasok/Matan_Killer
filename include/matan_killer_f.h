@@ -4,8 +4,9 @@
 #include "tree.h"
 #include "text_funcs.h"
 
-const int MAX_FUNC_NUMBER = 20; 
+const int MAX_FUNC_NUMBER = 30; 
 const int MAGIC_NUMBER_THAT_STANDS_FOR_ARITHM = -1;
+const int MAGIC_NUMBER_THAT_STANDS_FOR_POW = -3;
 
 struct  Lex_sub
 {
@@ -37,8 +38,9 @@ Exp_node * differentiate(const Exp_node *exp_node);
 
 Exp_node * simplifyTree(Exp_node *node);
 Exp_node * simplifyTreeRolls(Exp_node *node);
-Exp_node * wrapEquivalents(Exp_node *node);
-Exp_node * computeConstants(Exp_node *node);
+
+int wrapEquivalents(Exp_node *node);
+int computeConstants(Exp_node *node);
 
 Exp_node * rollUpTree(Exp_node *node);
 Exp_node * processOneZeroCases(Exp_node *node);

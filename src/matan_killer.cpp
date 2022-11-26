@@ -17,12 +17,29 @@ int main()
     printText(&text1);
 
     Exp_node * result = getGeneral(text1.buf);
-    printf("%s = %p\n", text1.buf, result);    
+    // printf("%s = %p\n", text1.buf, result);    
 
     printIn(result);
     printf("\n");
 
     TREE_DUMP(result);
+
+    // Exp_node * diff_func = differentiate(result);
+
+    // TREE_DUMP_OPTIONAL(diff_func, "after differentiation");
+    // printIn(diff_func);
+    // printf("\n");
+
+    // DBG_OUT;
+    Exp_node * diff_func = copy(result);
+    computeConstants(diff_func);
+
+    TREE_DUMP_OPTIONAL(diff_func, "after simplification");
+    printIn(diff_func);
+    printf("\n");
+
+    nodeDtor(diff_func);
+    free(diff_func);
 
     nodeDtor(result);
     free(result);
@@ -30,6 +47,7 @@ int main()
     textDtor(&text1);
 
     closeLogs();
+
 /*
 // {
 //     
@@ -40,7 +58,7 @@ int main()
 
 // {
 //     Exp_node * func = nodeCtor();
-//     getExpression(&text, func);
+    // getExpression(&text, func);
 
 //     TREE_DUMP_OPTIONAL(func->l_son, "initial tree");
 //     printIn(func->l_son);

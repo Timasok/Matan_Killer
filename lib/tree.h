@@ -73,9 +73,17 @@ struct Exp_node
 };
 
 Exp_node * nodeConnect(Exp_node *parent, const char dest);
+Exp_node * nodeConnect(Node_type type, Value value, Exp_node * l_son, Exp_node * r_son);
 Exp_node * nodeCtor();
+
 Exp_node * createNode(Node_type type, Value value, Exp_node * l_son, Exp_node * r_son);
 Exp_node * createNum(double number);
+Exp_node * createVar(char var);
+Exp_node * createOp(Operator op);
+Exp_node * createOp(int operation);
+
+#define CREATE_OP(op_name)          \
+    createOp( ##op_name)
 
 int linkToParent(Exp_node *parent, Exp_node *orphan);
 int linkSonsToParent(Exp_node *node);
@@ -98,7 +106,7 @@ int verifyTree(const Exp_node *node);
 ///////////////////////////////////////////////////////////////
 
 int nodeCtor(Node **node);
-Node * nodeConnect(Node *parent, const char dest);
+// Node * nodeConnect(Node *parent, const char dest);
 
 Node * findNode(Node *node, const char *string);
 int nodeDtor(Node *node);

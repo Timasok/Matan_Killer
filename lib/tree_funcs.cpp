@@ -156,6 +156,57 @@ Exp_node * createNode(Node_type type, Value value, Exp_node * l_son, Exp_node * 
 
 }
 
+Exp_node * nodeConnect(Node_type type, Value value, Exp_node * l_son, Exp_node * r_son)
+{
+    Exp_node * result = createNode(type, value, l_son, r_son);
+    linkToParent(result, l_son);
+    linkToParent(result, r_son);
+
+    return result;
+
+}
+
+Exp_node * createNum(double number)
+{
+    Value val = {};
+    val.dbl_value = number;
+    return createNode(NUM, val, nullptr, nullptr);
+}
+
+Exp_node * createVar(char var)
+{
+    Value val = {};
+    val.var_value = var;
+    return createNode(VAR, val, nullptr, nullptr);
+}
+
+Exp_node * createOp(Operator op)
+{
+    Value val = {};
+    val.op_value = op;
+    return createNode(OP, val, nullptr, nullptr);
+}
+
+#define DEF_OP(op_name, op_code, num, oper)                 \
+            else if(operation == op_code)                   \
+            {                                               \
+                val.op_value = op_name;                     \
+            }                                               \
+
+Exp_node * createOp(int operation)
+{
+    Value val = {};
+    val.op_value = NOT_OP;
+
+    if(0)
+    { }
+    #include "operations.h"
+
+    return createNode(OP, val, nullptr, nullptr);
+}
+
+#undef DEF_OP
+
 int linkToParent(Exp_node *parent, Exp_node *orphan)
 {
     if (parent == nullptr || orphan == nullptr)
@@ -273,28 +324,28 @@ int nodeCtor(Node **node)
     return 0;
 }
 
-Node * nodeConnect(Node *parent, const char dest)
-{
-    assert(parent != NULL);
+// Node * nodeConnect(Node *parent, const char dest)
+// {
+//     assert(parent != NULL);
     
-    Node * new_node = (Node *)calloc(1, sizeof(Node));
+//     Node * new_node = (Node *)calloc(1, sizeof(Node));
     
-    switch(dest)
-    {
-        case LEFT_SON:
-                parent->l_son = new_node;
-                break;
-        case RIGHT_SON:
-                parent->r_son = new_node;
-                break;
-        default:
-                //letim
-                break;
-    }
+//     switch(dest)
+//     {
+//         case LEFT_SON:
+//                 parent->l_son = new_node;
+//                 break;
+//         case RIGHT_SON:
+//                 parent->r_son = new_node;
+//                 break;
+//         default:
+//                 //letim
+//                 break;
+//     }
 
-    new_node->parent = parent;
-    return new_node;
-}
+//     new_node->parent = parent;
+//     return new_node;
+// }
 
 void printPre(const Node * node)
 {

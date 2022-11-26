@@ -115,7 +115,7 @@ static int oper(const Exp_node * node)
 
     PRINT_DOT(  "node%d [\n" "label=<\n"
                 "<table border=\"0\" cellborder=\"1\" cellspacing=\"0\">\n"
-                "    <tr><td bgcolor=\"#dfdf91\" port = \"H%d\">NODE %d = %p</td></tr>\n"
+                "    <tr><td bgcolor=\"#dfdf91\" port = \"H%d\">NODE %d = %p PARENT = %p</td></tr>\n"
                 "    <tr><td bgcolor= \"#5ca1cc\"><font color=\"black\"> %s </font></td></tr>\n"
                 
                 "    <tr>\n"
@@ -138,7 +138,7 @@ static int oper(const Exp_node * node)
                 "    </tr>\n" 
                 
                 "</table>>\n"
-                "]\n\n", nodeNumber, nodeNumber, nodeNumber, node, data, nodeNumber, node->l_son, nodeNumber, node->r_son);
+                "]\n\n", nodeNumber, nodeNumber, nodeNumber, node, node->parent, data, nodeNumber, node->l_son, nodeNumber, node->r_son);
     
     //There is no use yet to decide which port from the parent we should connect to his son GRAPHVIZ does it! 
     // const char output_port = 0;
