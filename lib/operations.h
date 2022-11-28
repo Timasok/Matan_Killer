@@ -10,32 +10,32 @@
 
 */
 
-DEF_OP(NOT_OP, '\r', -2, +)
+DEF_OP(NOT_OP, 0, '\r', -2, +, "")
 
-DEF_OP(ADD, '+', -1, +)
+DEF_OP(ADD, 4, '+', -1, +, "+")
 
-DEF_OP(SUB, '-', -1, -)
+DEF_OP(SUB, 4, '-', -1, - , "-")
     
-DEF_OP(MUL, '*', -1, *)
+DEF_OP(MUL, 3, '*', -1, *, "\\cdot ")
 
-DEF_OP(DIV, '/', -1, /)
+DEF_OP(DIV, 3, '/', -1, /, "")
 
-DEF_OP(POW, '^', -3, +)
+DEF_OP(POW, 2, '^', -3, +, "^")
 
-DEF_OP(SIN, 'S', 0, +)
+DEF_OP(SIN, 1, 'S', 0, +, "sin")
 
-DEF_OP(LN , 'L', 1, +)
+DEF_OP(LN , 1, 'L', 1, +, "ln")
 
-DEF_OP(COS, 'C', 2, +)
+DEF_OP(COS, 1, 'C', 2, + , "cos")
 
-DEF_OP(TAN, 'T', 3, +)
+DEF_OP(TAN, 1, 'T', 3, + , "tan")
 
-DEF_OP(SH, 's', 4, +)
+DEF_OP(SH, 1, 's', 4, +, "sh")
 
-DEF_OP(CH, 'c', 5, +)
+DEF_OP(CH, 1, 'c', 5, +, "ch")
 
-DEF_OP(TH, 't', 6, +)
+DEF_OP(TH, 1, 't', 6, +, "th")
 
-DEF_OP(ARCTG, '+', 7, +)
+DEF_OP(ARCTG, 1, '+', 7, +, "arctg")
 
-DEF_OP(ARCCOS, 'W', 8, +)
+DEF_OP(ARCCOS, 1,  'W', 8, +, "arccos")

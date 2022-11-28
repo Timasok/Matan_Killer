@@ -20,7 +20,7 @@ static bool equals(const double num_1, const double num_2)
 
 }
 
-#define DEF_OP(op_name, op_code, num, oper)                         \
+#define DEF_OP(op_name, priority, op_code, num, oper, str_for_tex)                         \
             else if(counter == num)                                 \
             {                                                       \
                 original[counter].initial = strdup(#op_name);       \
@@ -258,7 +258,7 @@ int readExpression(Exp_node * exp_node, const char * input, size_t shift, int fr
     return 0;
 }
 
-#define DEF_OP(op_name, op_code, num, oper)                         \
+#define DEF_OP(op_name, priority, op_code, num, oper, str_for_tex)                         \
      else if(symbol == op_code)                                     \
     {                                                               \
         result = op_name;                                           \
@@ -311,37 +311,6 @@ son equalsOne(Exp_node *node)
 
 #undef DEF_OP
 
-bool isTerminal(Exp_node *node)
-{
-    if (!node)
-        return false;
-
-    if (!node->l_son && !node->r_son)
-    {
-        return true;
-
-    }else {
-        
-        return false;
-    }
-
-}
-
-bool hasSons(Exp_node *node)
-{
-    //todo add soft assert
-    assert(!isTerminal(node));
-
-    if (node->l_son && node->r_son)
-    {
-        return true;
-
-    } else {
-
-        return false;
-    }
-}
-
 bool hasNumSons(Exp_node *node)
 {
     // ASSERT(!isTerminal(node));
@@ -360,33 +329,41 @@ bool hasNumSons(Exp_node *node)
     }
 }
 
-//DOESN'T WORK MTHF
-Exp_node * simplifyTree(Exp_node *node)
+int simplifyTree(Exp_node **node)
 {
-    ASSERT(node);
+    // ASSERT(node);
 
     int changes = 0;
 
-    // Exp_node * copy_node = copy(node);
+    int tmp_changes = 0;
 
     do {    
 
         changes = 0;
-        // wrapEquivalents(copy_node);    
-        
-        changes += computeConstants(node);
-        printf("changes = %d\n");
+
+        changes += wrapEquivalents(*node);
+
+        if (tmp_changes != changes)
+        {
+            saveMicroTransform(*node);
+            tmp_changes = changes;
+        }
+
+        changes += computeConstants(*node);
+
+        if (tmp_changes != changes)
+        {
+            saveMicroTransform(*node);
+            tmp_changes = 0;
+        }
 
     } while (changes != 0);
 
-    // nodeDtor(node);
-
-    return node;
+    return 0;
 }
 
 int computeConstants(Exp_node *node)
 {
-    Exp_node * result = node;
     int changes = 0;
 
     if (!node) 
@@ -399,12 +376,10 @@ int computeConstants(Exp_node *node)
    
     if (node->type == OP && hasNumSons(node))
     {
-        node = rollUpTree(node);
-        changes++;
+        changes += rollUpTree(node);
 
     } 
-/**/
-    else
+    else 
     {
         
         if (node->l_son)
@@ -414,8 +389,8 @@ int computeConstants(Exp_node *node)
             
             if (node->l_son != left_result)
             {
-                result->l_son = left_result;
-                linkToParent(result, left_result);
+                node->l_son = left_result;
+                linkToParent(node, left_result);
             }
         }
 
@@ -438,82 +413,39 @@ int computeConstants(Exp_node *node)
 
 int wrapEquivalents(Exp_node *node)
 {
-    Exp_node * result = node;
     int changes = 0;
-    // dumpExpNode(node);
 
     if (!node) 
         return 0;
 
+    #ifdef DEBUG
+            printf("we simplified this node\n");
+            dumpExpNode(node);
+    #endif            
+
     if (node->type == VAR || node->type == NUM)
     {
-        // return result;
-    }
-
-    if (node->type == OP)
+        return 0;
+    
+    } else if (node->type == OP && hasSons(node) == true)
     {
-    
-        if (hasSons(node))
-        {
 
-    #ifdef DEBUG
-            printf("\nwe should've simplified this node");
-            dumpExpNode(node);
-    #endif
-            Exp_node * res = processOneZeroCases(node);
-
-    #ifdef DEBUG
-            printf("old node = %p, new node = %p\n", node, res);
-    #endif
-            if (res != node)
-            {
-                // node->parent->l_son = nullptr;
-    
-    #ifdef DEBUG
-                printf("we simplified this node\n");
-    #endif            
-                // node = res;
-                // res->parent = nullptr;
-                
-                //TODO ! fix mthf
-                // return res;            
-            }
-            
-        }
-            
+        changes += processOneZeroCases(node);
+                   
+        
         if (node->l_son)
-        {
-            Exp_node *left_result = node->r_son;
-            wrapEquivalents(node->l_son);
-
-            if (result->l_son != left_result)
-            {
-                result->l_son = left_result;
-                linkToParent(result, left_result);
-            }
-        }
+            changes += wrapEquivalents(node->l_son);
 
         if (node->r_son)
-        {
-            Exp_node *right_result = node->r_son;
-            wrapEquivalents(node->r_son);
-            
-            if (result->r_son != right_result)
-            {
-                result->r_son = right_result;
-                linkToParent(result, right_result);
-            }
-        }
+            changes += wrapEquivalents(node->r_son);
 
     }
-
-    node = result;
 
     return changes;
 
 }
 
-#define DEF_OP(op_name, op_code, num, oper)                                                     \
+#define DEF_OP(op_name, priority, op_code, num, oper, str_for_tex)                                                     \
     else if (node->value.op_value == op_code)                                                   \
     {                                                                                           \
         if (num == MAGIC_NUMBER_THAT_STANDS_FOR_ARITHM)                                         \
@@ -529,11 +461,10 @@ int wrapEquivalents(Exp_node *node)
         }                                                                                       \
     }
 
-Exp_node * rollUpTree(Exp_node *node)
+int rollUpTree(Exp_node *node)
 {
     bool have_to_roll_up = false;
     Value val = {};
-    Exp_node * new_node = node;
 
     if (0) {}
     #include "operations.h"
@@ -549,10 +480,10 @@ Exp_node * rollUpTree(Exp_node *node)
         node->type = NUM;
 
         node->value = val;
-        
+        return 1;
     }
 
-    return node;
+    return 0;
 }
 
 #undef DEF_OP
@@ -602,16 +533,16 @@ static bool expressionEqualsOne(const int side_of_one, const int side_of_zero, c
     return false;
 }
 
-Exp_node * processOneZeroCases(Exp_node *node)
+int processOneZeroCases(Exp_node *node)
 {
     if (!node)
-        return node;
+        return 0;
 
     int side_of_one  = equalsOne(node);
     int side_of_zero = equalsZero(node);
 
     if (side_of_zero == HOLLOW && side_of_one == HOLLOW)
-        return node;
+        return 0;
     
     int conjugate_side = HOLLOW;
     
@@ -632,72 +563,81 @@ Exp_node * processOneZeroCases(Exp_node *node)
     printf("operation value %c\n", node->value.op_value);
 #endif  
 
-    bool node_becomes_num = false;
-
     Value val = {};
-    Exp_node * new_node = node;
+    int changes = 1;
 
     bool eq_exp = expressionEqualsConjugate(side_of_one, side_of_zero, conjugate_side, node->value.op_value);
     bool eq_one = expressionEqualsOne(side_of_one, side_of_zero, conjugate_side, node->value.op_value);
     bool eq_zero = expressionEqualsZero(side_of_one, side_of_zero, conjugate_side, node->value.op_value);
 
-    // printf("eq exp %d, eq one %d, eq zero %d\n", eq_exp, eq_one, eq_one);
+#ifdef DEBUG
+    printf("eq exp %d, eq one %d, eq zero %d\n", eq_exp, eq_one, eq_one);
+#endif
 
     if (eq_exp)
     {
+        Exp_node * left_victim = node->l_son;
+        Exp_node * right_victim = node->r_son;
 
         switch (conjugate_side)
         {
             case LEFT_SON:
             {
-                new_node = node->l_son;
-                node->l_son = nullptr;
+                node->type = node->l_son->type;
+                node->value = node->l_son->value;
+
+                pickCubs(node->l_son, node);
+
                 break;
             }
+
             case RIGHT_SON:
             {
-                new_node = node->r_son;
-                node->r_son = nullptr;
+                node->type = node->r_son->type;
+                node->value = node->r_son->value;
+                
+                pickCubs(node->r_son, node);
+
                 break;            
             }
 
         }        
 
-        if (node->parent)
-        {
-            linkToParent(node->parent, new_node);
-        }
+        nodeDtor(left_victim);
+        nodeDtor(right_victim);
 
-        nodeDtor(node);
-
-    }else if (eq_one)
+    } else if (eq_one)
     {
-
-        node_becomes_num = true;
         val.dbl_value = 1;
 
-    }else if(eq_zero)
-    {
+        nodeDtor(node->l_son);
+        nodeDtor(node->r_son);
 
-        node_becomes_num = true;
+        node->l_son = nullptr;
+        node->r_son = nullptr;
+
+        node->type = NUM;
+        node->value = val;
+        
+    } else if(eq_zero)
+    {
         val.dbl_value = 0;
 
+        nodeDtor(node->l_son);
+        nodeDtor(node->r_son);
+
+        node->l_son = nullptr;
+        node->r_son = nullptr;
+
+        node->type = NUM;
+        node->value = val;
+
+    } else {
+    
+        changes = 0;
     }
 
-    if (node_becomes_num)
-    {
-        new_node = createNode(NUM, val, NULL, NULL);
-        
-        if (node->parent)
-        {
-            linkToParent(node->parent, new_node);
-        }
-
-        nodeDtor(node);
-
-    }
-
-    return new_node;
+    return changes;
 }
 
 int parseTerminalNode(Exp_node *exp_node, const char * parsing_start, size_t parsing_length)

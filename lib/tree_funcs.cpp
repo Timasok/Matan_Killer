@@ -187,7 +187,7 @@ Exp_node * createOp(Operator op)
     return createNode(OP, val, nullptr, nullptr);
 }
 
-#define DEF_OP(op_name, op_code, num, oper)                 \
+#define DEF_OP(op_name, priority, op_code, num, oper, str_for_tex)    \
             else if(operation == op_code)                   \
             {                                               \
                 val.op_value = op_name;                     \
@@ -206,6 +206,34 @@ Exp_node * createOp(int operation)
 }
 
 #undef DEF_OP
+
+bool isTerminal(Exp_node *node)
+{
+    if (!node)
+        return false;
+
+    if (!node->l_son && !node->r_son)
+    {
+        return true;
+
+    }else {
+        
+        return false;
+    }
+
+}
+
+bool hasSons(Exp_node *node)
+{
+    if (node->l_son && node->r_son)
+    {
+        return true;
+
+    } else {
+
+        return false;
+    }
+}
 
 int linkToParent(Exp_node *parent, Exp_node *orphan)
 {
@@ -226,6 +254,23 @@ int linkSonsToParent(Exp_node *node)
     if (node->r_son)
         node->r_son->parent = node;
 
+    return 0;
+}
+
+int pickCubs(Exp_node * prev_parent, Exp_node * new_parent)
+{
+    if (!hasSons(prev_parent))
+        return -1;
+
+    new_parent->l_son = prev_parent->l_son;
+    new_parent->r_son = prev_parent->r_son;
+
+    linkToParent(new_parent, prev_parent->l_son);
+    linkToParent(new_parent, prev_parent->r_son);
+
+    prev_parent->l_son = nullptr;
+    prev_parent->r_son = nullptr;
+    
     return 0;
 }
 
@@ -324,6 +369,7 @@ int nodeCtor(Node **node)
     return 0;
 }
 
+/*
 // Node * nodeConnect(Node *parent, const char dest)
 // {
 //     assert(parent != NULL);
@@ -346,6 +392,7 @@ int nodeCtor(Node **node)
 //     new_node->parent = parent;
 //     return new_node;
 // }
+*/
 
 void printPre(const Node * node)
 {

@@ -40,7 +40,7 @@ enum Node_type
 
 };
 
-#define DEF_OP(op_name, op_code, num, oper)                 \
+#define DEF_OP(op_name, priority, op_code, num, oper, str_for_tex)                 \
     op_name = op_code,                                      \
 
 enum Operator
@@ -87,6 +87,11 @@ Exp_node * createOp(int operation);
 
 int linkToParent(Exp_node *parent, Exp_node *orphan);
 int linkSonsToParent(Exp_node *node);
+int pickCubs(Exp_node * prev_parent, Exp_node * new_parent);
+// int tearNode(Exp_node * prev_parent, Exp_node * new_parent);
+
+bool isTerminal(Exp_node *node);
+bool hasSons(Exp_node *node);
 
 Exp_node * copy(Exp_node * node);
 int copyNodeData(const Exp_node *src_node, Exp_node *dest_node);
