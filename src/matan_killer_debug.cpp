@@ -396,17 +396,13 @@ int printInOrderTex(const Exp_node *node)
             return -1;
         }
 
-        bool need_additional_brackets = false;
+        bool need_additional_brackets = node->parent && (getPriority(node) > getPriority(node->parent)) && priority > 1;
         Operator op = node->value.op_value;
 
-        if (node->parent != nullptr)
-        {
-            bool need_additional_brackets = ((getPriority(node) > getPriority(node->parent)) && priority > 1);
 
-#ifndef DEBUG
-        }
-#endif
 #ifdef DEBUG
+        if (node->parent)
+        {
             dumpExpNode(node);
             printf("priority = %d parent_priority = %d %d\n", getPriority(node), getPriority(node->parent), need_additional_brackets);
 
@@ -416,10 +412,6 @@ int printInOrderTex(const Exp_node *node)
             printf("priority = %d %d\n", getPriority(node), need_additional_brackets);
         }
 #endif
-        if (need_additional_brackets)
-        {
-            fprintf(TEX_LOG, "(");
-        }    
 
         if (priority == UNAR_OP)
         {
@@ -435,6 +427,12 @@ int printInOrderTex(const Exp_node *node)
         
         } else
         {
+
+            if (need_additional_brackets == true)
+            {
+                fprintf(TEX_LOG, "(");
+            }
+
             if (op == DIV)
             {
                 fprintf(TEX_LOG, "\\frac{");
@@ -442,7 +440,6 @@ int printInOrderTex(const Exp_node *node)
 
             printInOrderTex(node->l_son);
             
-
             if (op == DIV)
             {
                 fprintf(TEX_LOG, "}{");
@@ -462,7 +459,7 @@ int printInOrderTex(const Exp_node *node)
             if (op == DIV || op == POW)
                 fprintf(TEX_LOG, "}");
 
-            if (need_additional_brackets)
+            if (need_additional_brackets == true)
             {
                 fprintf(TEX_LOG, ")");
             }

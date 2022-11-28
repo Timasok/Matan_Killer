@@ -69,6 +69,12 @@
                                                                                                     \
         } while(0)                                                                                  \
 
+#define dRR(linking_side, src_side)                                                                 \
+        do{                                                                                         \
+            diffNode(node, new_node->r_son->r_son, linking_side, src_side);                         \
+                                                                                                    \
+        } while(0)                                                                                  \
+
 #define cLR(linking_side, src_side)                                                                 \
         do{                                                                                         \
             copyNode(node, new_node->l_son->r_son, linking_side, src_side);                         \
@@ -79,6 +85,12 @@
 #define cRRR(linking_side, src_side)                                                                \
         do{                                                                                         \
             copyNode(node, new_node->r_son->r_son->r_son, linking_side, src_side);                  \
+                                                                                                    \
+        } while(0)                                                                                  \
+
+#define cRLL(linking_side, src_side)                                                                \
+        do{                                                                                         \
+            copyNode(node, new_node->r_son->l_son->l_son, linking_side, src_side);                  \
                                                                                                     \
         } while(0)                                                                                  \
 
@@ -260,6 +272,13 @@
             new_node->r_son->r_son->r_son = createOp(operation);                  \
             linkToParent(new_node->r_son->r_son, new_node->r_son->r_son->r_son);  \
         } while(0)                                                                \
+
+#define right_left_left_Op(operation)                                           \
+        do{                                                                       \
+            new_node->r_son->l_son->l_son = createOp(operation);                  \
+            linkToParent(new_node->r_son->l_son, new_node->r_son->l_son->l_son);  \
+        } while(0)                                                                \
+
 
 #define rightOp(operation)                                      \
         do{                                                     \

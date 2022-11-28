@@ -771,26 +771,35 @@ Exp_node * differentiate(const Exp_node *node)
 
                     }else {
                         
-                    //     makeOp(MUL);
+                        makeOp(MUL);
 
-                    // //creating first level
-                    //     leftOp(POW);
-                    //     rightOp(ADD);
+                    //creating first level
+                        leftOp(POW);
+                        rightOp(ADD);
 
-                    // //second level
+                    //second level
 
-                    //     cR(LEFT_SON, LEFT_SON);
-                    //     cR(RIGHT_SON, RIGHT_SON);
+                        cL(LEFT_SON, LEFT_SON);
+                        cL(RIGHT_SON, RIGHT_SON);
 
-                    //     right_left_Op(MUL);
-                    //     right_right_Op(MUL);
+                        right_left_Op(MUL);
+                        right_right_Op(MUL);
                                        
-                    // //third level
+                    //third level
 
-                    //     dRL(LEFT_SON, LEFT_SON);
-                    //     cRL(RIGHT_SON, RIGHT_SON);
-                        
-                    //     cRR()
+                        right_left_left_Op(DIV);
+                        dRL(RIGHT_SON, LEFT_SON);
+
+                        dRR(LEFT_SON, RIGHT_SON);
+                        right_right_right_Op(LN);
+
+                    //fourth level
+
+                        cRLL(LEFT_SON, LEFT_SON);
+                        cRLL(RIGHT_SON, RIGHT_SON);
+
+                        mRRR(LEFT_SON, 0);
+                        cRRR(RIGHT_SON, LEFT_SON);
 
                     }
 
