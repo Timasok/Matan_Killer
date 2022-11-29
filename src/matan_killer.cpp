@@ -11,15 +11,15 @@ int main()
 {
     Var v_arr[NUMBER_OF_VARS] = {};
 
-    getVarIndex(v_arr, "x");
-    getVarIndex(v_arr, "x");
-    getVarIndex(v_arr, "y");
-    getVarIndex(v_arr, "z_1");
-    getVarIndex(v_arr, "z_2");
+    // getVarIndex(v_arr, "x");
+    // getVarIndex(v_arr, "x");
+    // getVarIndex(v_arr, "y");
+    // getVarIndex(v_arr, "z_1");
+    // getVarIndex(v_arr, "z_2");
 
-    dumpVarArray(v_arr);
-    varArrayDtor(v_arr);
-/*    openLogs();
+    // dumpVarArray(v_arr);
+    
+    openLogs();
     Text_info text1 = {};
     
     textCtor(&text1, "expression.input");
@@ -33,6 +33,7 @@ int main()
 
     TREE_DUMP(result);
 
+/*
     Exp_node * diff_func = differentiate(result);
     simplifyTree(&diff_func);
 
@@ -52,7 +53,8 @@ int main()
 
     nodeDtor(diff_copy);
     free(diff_copy);
-
+*/
+    
     nodeDtor(result);
     free(result);
 
@@ -60,7 +62,8 @@ int main()
 
     openPDF();
     closeLogs();
-*/    
+    
+    varArrayDtor(v_arr);
     
     return 0;
 }

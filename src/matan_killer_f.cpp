@@ -71,193 +71,6 @@ int LexDtor(Lex_sub *lex)
 
 #undef DEF_OP
 
-char * replaceFuncNames(const char * input)
-{
-
-    Lex_sub * lex = getLexicalSubstitusions();
-
-    char * result = nullptr;
-    const char * searched = nullptr;
-
-    for (int idx = 0; idx < MAX_FUNC_NUMBER; idx++)
-    {
-
-        if (lex[idx].initial == nullptr)
-            break;
-
-
-        size_t initial_len = strlen(lex[idx].initial);
-
-        searched = strstr(input, lex[idx].initial);
-
-        if (searched == nullptr && lex[idx].initial != NULL)
-        {
-            char * initial_copy = strdup(lex[idx].initial);
-
-            for (int counter = 0; counter < initial_len; counter++)
-            {
-                initial_copy[counter] = tolower(lex[idx].initial[counter]);
-            }
-
-            searched = strstr(input, initial_copy);
-            free(initial_copy);
-        }
-
-        if (searched != nullptr)
-        {
-            size_t parsed_len = strlen(lex[idx].parsed);
-            size_t input_len  = strlen(input);
-
-            size_t initial_shift = searched - input;
-            size_t remainder_len = input_len - initial_shift - initial_len; 
-
-#ifdef DEBUG
-        printf("initial_shift = %d parsed_len = %d remainder_len = %d\n", initial_shift, parsed_len, remainder_len);
-        printf("initial_len = %d input_len = %d\n\n", initial_len, input_len);
-#endif
-
-            result = (char *)calloc(initial_shift + parsed_len + remainder_len + 1, sizeof(char));
-
-#ifdef DEBUG
-            printf("allocated space = %d\n", initial_shift + parsed_len + remainder_len);
-
-            STRING_DUMP(input);
-            STRING_DUMP(lex[idx].parsed);
-            STRING_DUMP(searched + initial_len);
-#endif
-            strncpy(result, input, initial_shift);
-
-#ifdef DEBUG
-            STRING_DUMP(result);
-#endif
-            strncat(result, lex[idx].parsed, parsed_len);
-
-#ifdef DEBUG            
-            STRING_DUMP(result);
-#endif            
-            strncat(result, searched + initial_len, remainder_len);
-
-#ifdef DEBUG
-            STRING_DUMP(result);
-#endif
-            searched = nullptr;
-        }
-
-    }
-    
-    LexDtor(lex);
-
-    return result;
-    
-}
-
-int getExpression(Text_info *text, Exp_node *main_node)
-{
-    if (text->buf == nullptr)
-    {
-        //статический массив передаю блэт
-        char input[MAX_BUFFER_LENGTH] = {};
-
-        fscanf(stdin, "%*[\n]" );
-        fprintf(stdin,"\n");
-        scanf("%[^\n]s", input);
-
-        readExpression(main_node, input, 0, LEFT_SON);
-        
-    }else{
-
-        char * result = replaceFuncNames(text->lines[0]);
-
-        if (!result)
-        {
-            readExpression(main_node, text->lines[0], 0, LEFT_SON);
-
-        }else{
-        
-            readExpression(main_node, result, 0, LEFT_SON);
-        }
-
-        free(result);
-    }
-    
-    return 0;
-}
-
-int readExpression(Exp_node * exp_node, const char * input, size_t shift, int free_port)
-{
-
-    size_t len = strlen(input);
-
-    if (input == nullptr || shift == len)
-        return 0;
-
-#ifdef DEBUG
-    printf("\ninput = %s\n", &input[shift]);
-#endif
-
-    const char * open_bracket  = strchr(&input[shift], '(');
-    const char * close_bracket = strchr(&input[shift], ')');
-
-    if (open_bracket == nullptr && close_bracket == nullptr)
-    {
-        readExpression(exp_node, input, len, RIGHT_SON);
-        return 0;
-    }
-
-    const char * first_bracket;
-
-    if (open_bracket == nullptr)
-    {
-        first_bracket = close_bracket;
-
-    }else if(close_bracket == nullptr)
-    {
-        first_bracket = open_bracket;
-
-    }else {
-
-        first_bracket = (open_bracket < close_bracket) ? open_bracket : close_bracket;
-
-    }
-
-#ifdef DEBUG
-    printf("open_bracket = %s close_bracket = %s first_bracket = %s\n", open_bracket, close_bracket, first_bracket);
-#endif
-
-    size_t parsing_length = first_bracket - &input[shift];
-
-#ifdef DEBUG
-    printf("parsing_length = %lu free_port = %d\n", parsing_length, free_port);
-#endif
-
-    if (parsing_length > 0)
-    {
-        parseTerminalNode(exp_node, &input[shift], parsing_length);
-    
-    #ifdef DEBUG
-        dumpExpNode(exp_node);
-    #endif
-
-        readExpression(exp_node, input, shift + parsing_length, free_port);
-
-    } else if (&input[shift] == close_bracket)
-    {
-        readExpression(exp_node->parent, input, shift + 1, (free_port + 1) % 2);
-
-    } else if (&input[shift] == open_bracket)
-    {
-
-        Exp_node * new_node = nodeConnect(exp_node, free_port);
-        readExpression(new_node, input, shift + 1, free_port);//TODO спорный мяч
-
-    }else{
-    
-        readExpression(exp_node, input, shift + 1, free_port);
-    }
-
-    return 0;
-}
-
 #define DEF_OP(op_name, priority, op_code, num, oper, str_for_tex)                         \
      else if(symbol == op_code)                                     \
     {                                                               \
@@ -444,7 +257,6 @@ int wrapEquivalents(Exp_node *node)
     return changes;
 
 }
-
 
 #define DEF_OP(op_name, priority, op_code, num, oper, str_for_tex)                                                     \
     else if (node->value.op_value == op_code)                                                   \
@@ -639,53 +451,6 @@ int processOneZeroCases(Exp_node *node)
     }
 
     return changes;
-}
-
-int parseTerminalNode(Exp_node *exp_node, const char * parsing_start, size_t parsing_length)
-{
-
-    char * terminalValue = strdup(parsing_start);
-    terminalValue[parsing_length] = '\0';
-
-#ifdef DEBUG
-    printf("input_segment =%s \nparsed_segment = %s\n", parsing_start, terminalValue);
-#endif
-
-    double value;
-    char char_value = ' ';
-    
-    if (sscanf(terminalValue, "%lf", &value) == 1)
-    {
-        exp_node->type = NUM;
-        exp_node->value.dbl_value = value;
-        free(terminalValue);
-        return 0;
-    
-    }else /*if(parsing_length == 1)*///TODO maybe add check in here
-    {
-        sscanf(terminalValue, " %c", &char_value);
-        free(terminalValue);
-
-        Operator op = isOp(char_value);
-
-        if (op != NOT_OP)
-        {
-            exp_node->type = OP;
-            exp_node->value.op_value = op;
-            return 0;
-
-        }else if (isalpha(char_value))
-        {
-            exp_node->type = VAR;
-            exp_node->value.var_value = char_value;
-            return 0;
-
-        }
-
-    }
-
-    return MATAN_KILLER_ERROR_CAN_NOT_PARSE_NODE;
-
 }
 
 Exp_node * differentiate(const Exp_node *node)
@@ -1040,3 +805,241 @@ int copyNode(const Exp_node *argument, Exp_node * result, const char linking_sid
 
     return 0;
 }
+
+#ifdef HOCHU_COSTYL
+
+char * replaceFuncNames(const char * input)
+{
+
+    Lex_sub * lex = getLexicalSubstitusions();
+
+    char * result = nullptr;
+    const char * searched = nullptr;
+
+    for (int idx = 0; idx < MAX_FUNC_NUMBER; idx++)
+    {
+
+        if (lex[idx].initial == nullptr)
+            break;
+
+
+        size_t initial_len = strlen(lex[idx].initial);
+
+        searched = strstr(input, lex[idx].initial);
+
+        if (searched == nullptr && lex[idx].initial != NULL)
+        {
+            char * initial_copy = strdup(lex[idx].initial);
+
+            for (int counter = 0; counter < initial_len; counter++)
+            {
+                initial_copy[counter] = tolower(lex[idx].initial[counter]);
+            }
+
+            searched = strstr(input, initial_copy);
+            free(initial_copy);
+        }
+
+        if (searched != nullptr)
+        {
+            size_t parsed_len = strlen(lex[idx].parsed);
+            size_t input_len  = strlen(input);
+
+            size_t initial_shift = searched - input;
+            size_t remainder_len = input_len - initial_shift - initial_len; 
+
+#ifdef DEBUG
+        printf("initial_shift = %d parsed_len = %d remainder_len = %d\n", initial_shift, parsed_len, remainder_len);
+        printf("initial_len = %d input_len = %d\n\n", initial_len, input_len);
+#endif
+
+            result = (char *)calloc(initial_shift + parsed_len + remainder_len + 1, sizeof(char));
+
+#ifdef DEBUG
+            printf("allocated space = %d\n", initial_shift + parsed_len + remainder_len);
+
+            STRING_DUMP(input);
+            STRING_DUMP(lex[idx].parsed);
+            STRING_DUMP(searched + initial_len);
+#endif
+            strncpy(result, input, initial_shift);
+
+#ifdef DEBUG
+            STRING_DUMP(result);
+#endif
+            strncat(result, lex[idx].parsed, parsed_len);
+
+#ifdef DEBUG            
+            STRING_DUMP(result);
+#endif            
+            strncat(result, searched + initial_len, remainder_len);
+
+#ifdef DEBUG
+            STRING_DUMP(result);
+#endif
+            searched = nullptr;
+        }
+
+    }
+    
+    LexDtor(lex);
+
+    return result;
+    
+}
+
+int getExpression(Text_info *text, Exp_node *main_node)
+{
+    if (text->buf == nullptr)
+    {
+        //статический массив передаю блэт
+        char input[MAX_BUFFER_LENGTH] = {};
+
+        fscanf(stdin, "%*[\n]" );
+        fprintf(stdin,"\n");
+        scanf("%[^\n]s", input);
+
+        readExpression(main_node, input, 0, LEFT_SON);
+        
+    }else{
+
+        char * result = replaceFuncNames(text->lines[0]);
+
+        if (!result)
+        {
+            readExpression(main_node, text->lines[0], 0, LEFT_SON);
+
+        }else{
+        
+            readExpression(main_node, result, 0, LEFT_SON);
+        }
+
+        free(result);
+    }
+    
+    return 0;
+}
+
+int readExpression(Exp_node * exp_node, const char * input, size_t shift, int free_port)
+{
+
+    size_t len = strlen(input);
+
+    if (input == nullptr || shift == len)
+        return 0;
+
+#ifdef DEBUG
+    printf("\ninput = %s\n", &input[shift]);
+#endif
+
+    const char * open_bracket  = strchr(&input[shift], '(');
+    const char * close_bracket = strchr(&input[shift], ')');
+
+    if (open_bracket == nullptr && close_bracket == nullptr)
+    {
+        readExpression(exp_node, input, len, RIGHT_SON);
+        return 0;
+    }
+
+    const char * first_bracket;
+
+    if (open_bracket == nullptr)
+    {
+        first_bracket = close_bracket;
+
+    }else if(close_bracket == nullptr)
+    {
+        first_bracket = open_bracket;
+
+    }else {
+
+        first_bracket = (open_bracket < close_bracket) ? open_bracket : close_bracket;
+
+    }
+
+#ifdef DEBUG
+    printf("open_bracket = %s close_bracket = %s first_bracket = %s\n", open_bracket, close_bracket, first_bracket);
+#endif
+
+    size_t parsing_length = first_bracket - &input[shift];
+
+#ifdef DEBUG
+    printf("parsing_length = %lu free_port = %d\n", parsing_length, free_port);
+#endif
+
+    if (parsing_length > 0)
+    {
+        parseTerminalNode(exp_node, &input[shift], parsing_length);
+    
+    #ifdef DEBUG
+        dumpExpNode(exp_node);
+    #endif
+
+        readExpression(exp_node, input, shift + parsing_length, free_port);
+
+    } else if (&input[shift] == close_bracket)
+    {
+        readExpression(exp_node->parent, input, shift + 1, (free_port + 1) % 2);
+
+    } else if (&input[shift] == open_bracket)
+    {
+
+        Exp_node * new_node = nodeConnect(exp_node, free_port);
+        readExpression(new_node, input, shift + 1, free_port);//TODO спорный мяч
+
+    }else{
+    
+        readExpression(exp_node, input, shift + 1, free_port);
+    }
+
+    return 0;
+}
+
+int parseTerminalNode(Exp_node *exp_node, const char * parsing_start, size_t parsing_length)
+{
+
+    char * terminalValue = strdup(parsing_start);
+    terminalValue[parsing_length] = '\0';
+
+#ifdef DEBUG
+    printf("input_segment =%s \nparsed_segment = %s\n", parsing_start, terminalValue);
+#endif
+
+    double value;
+    char char_value = ' ';
+    
+    if (sscanf(terminalValue, "%lf", &value) == 1)
+    {
+        exp_node->type = NUM;
+        exp_node->value.dbl_value = value;
+        free(terminalValue);
+        return 0;
+    
+    }else 
+    {
+        sscanf(terminalValue, " %c", &char_value);
+        free(terminalValue);
+
+        Operator op = isOp(char_value);
+
+        if (op != NOT_OP)
+        {
+            exp_node->type = OP;
+            exp_node->value.op_value = op;
+            return 0;
+
+        }else if (isalpha(char_value))
+        {
+            exp_node->type = VAR;
+            exp_node->value.var = char_value;
+            return 0;
+
+        }
+
+    }
+
+    return MATAN_KILLER_ERROR_CAN_NOT_PARSE_NODE;
+
+}
+
+#endif

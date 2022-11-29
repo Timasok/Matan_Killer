@@ -136,19 +136,19 @@ int copyNodeData(const Exp_node *src_node, Exp_node *dest_node)
 
 }
 
-int getVarIndex(Var v_arr[], const char * var_name)
+int getVarIndex(Var v_arr[], const char * name)
 {
     int var_index = NUMBER_OF_VARS;
 
     for (int counter = 0; counter < NUMBER_OF_VARS; counter++)
     {
-        if(v_arr[counter].var_name == NULL)
+        if(v_arr[counter].name == NULL)
         {
             var_index = counter;
-            v_arr[counter].var_name = strdup(var_name);
+            v_arr[counter].name = strdup(name);
             break;
 
-        }else if (stringEquals(var_name, v_arr[counter].var_name))
+        }else if (stringEquals(name, v_arr[counter].name))
         {
             var_index = counter;
             break;
@@ -167,7 +167,7 @@ int getVarIndex(Var v_arr[], const char * var_name)
 
 int addVarByIndex(Var v_arr[], double value, size_t index)
 {
-    if (index >= NUMBER_OF_VARS || v_arr[index].var_name == NULL)
+    if (index >= NUMBER_OF_VARS || v_arr[index].name == NULL)
     {
         printf("Cannot find current index!\n");
         DBG_OUT;
@@ -184,9 +184,9 @@ int addVarByIndex(Var v_arr[], double value, size_t index)
     return 0;
 }
 
-int addValueToVarArray(Var v_arr[], double value, const char *var_name)
+int addValueToVarArray(Var v_arr[], double value, const char *name)
 {
-    int var_index = getVarIndex(v_arr, var_name);
+    int var_index = getVarIndex(v_arr, name);
 
     return addVarByIndex(v_arr, value, var_index);
     
@@ -194,10 +194,10 @@ int addValueToVarArray(Var v_arr[], double value, const char *var_name)
 
 int varArrayDtor(Var v_arr[])
 {
-    for (int counter = 0; counter < NUMBER_OF_VARS && v_arr[counter].var_name != NULL; counter++)
+    for (int counter = 0; counter < NUMBER_OF_VARS && v_arr[counter].name != NULL; counter++)
     {
         v_arr[counter].value = 0;
-        free(v_arr[counter].var_name);
+        free(v_arr[counter].name);
     }
 
     return 0;
@@ -207,7 +207,7 @@ int dumpVarArray(Var v_arr[])
 {
     for (int counter = 0; counter < NUMBER_OF_VARS; counter++)
     {
-        printf("VAR[%d] = {%s, %g}\n", counter, v_arr[counter].var_name, v_arr[counter].value);
+        printf("VAR[%d] = {%s, %g}\n", counter, v_arr[counter].name, v_arr[counter].value);
     }
     return 0;
 }
@@ -253,7 +253,14 @@ Exp_node * createNum(double number)
 Exp_node * createVar(char var)
 {
     Value val = {};
-    val.var_value = var;
+    val.var.value = var;
+    return createNode(VAR, val, nullptr, nullptr);
+}
+
+Exp_node * createVar(char * var_name)
+{
+    Value val = {};
+    val.var.name = var_name;
     return createNode(VAR, val, nullptr, nullptr);
 }
 
@@ -373,7 +380,7 @@ void printIn(const Exp_node * node)
             printf("%g", node->value.dbl_value);
             break;
         case VAR:
-            printf("%c", node->value.var_value);
+            printf("%s", node->value.var.name);
             break;
         default:
             printf("Блэт");
@@ -422,7 +429,12 @@ int nodeDtor(Exp_node *node)
             printf("\n\e[0;31mзафришен - \e[0m");
             dumpExpNode(node);
         #endif
-        
+            if (node->type == VAR)
+            {
+                if (node->value.var.name != NULL)
+                    free(node->value.var.name);
+            }
+
             free(node);
             return 0;
 

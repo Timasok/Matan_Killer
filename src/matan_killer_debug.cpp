@@ -42,7 +42,7 @@ int dumpExpNode(const Exp_node * exp_node)
             printf("\nNUMBER (%g)\n", exp_node->value.dbl_value);
             break;
         case VAR:
-            printf("\nVARIABLE (%c)\n", exp_node->value.var_value);
+            printf("\nVARIABLE (%s)\n", exp_node->value.var.name);
             break;
         default:
             printf("\nБлэт не определился\n");
@@ -150,7 +150,7 @@ static int oper(const Exp_node * node)
             sprintf(data, "\nNUMBER (%g)\n", node->value.dbl_value);
             break;
         case VAR:
-            sprintf(data, "\nVARIABLE (%c)\n", node->value.var_value);
+            sprintf(data, "\nVARIABLE (%s)\n", node->value.var.name);
             break;
         default:
             sprintf(data, "\nБлэт не определился\n");
@@ -384,7 +384,7 @@ int printInOrderTex(const Exp_node *node)
 
     } else if (node->type == VAR)
     {
-        fprintf(TEX_LOG, "%c", node->value.var_value);
+        fprintf(TEX_LOG, "%s", node->value.var.name);
 
     } else if (node->type == OP)
     {

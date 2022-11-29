@@ -51,11 +51,19 @@ enum Operator
   
 #undef DEF_OP
 
+
+typedef struct Var_t
+{
+    char *name;
+    double value;
+} Var;
+
 union Value
 {
     Operator op_value;
     double dbl_value;
-    char var_value;
+    // char var;
+    Var var;
 
 };
 
@@ -72,26 +80,20 @@ struct Exp_node
     
 };
 
-struct Var
-{
-    char *var_name;
-    double value;
-
-};
-
 Exp_node * nodeConnect(Exp_node *parent, const char dest);
 Exp_node * nodeConnect(Node_type type, Value value, Exp_node * l_son, Exp_node * r_son);
 Exp_node * nodeCtor();
 
-int addValueToVarArray(Var v_arr[], double value, const char *var_name);
+int addValueToVarArray(Var v_arr[], double value, const char *name);
 int addVarByIndex(Var v_arr[], double value, size_t index);
-int getVarIndex(Var v_arr[], const char * var_name);
+int getVarIndex(Var v_arr[], const char * name);
 int dumpVarArray(Var v_arr[]);
 int varArrayDtor(Var v_arr[]);
 
 Exp_node * createNode(Node_type type, Value value, Exp_node * l_son, Exp_node * r_son);
 Exp_node * createNum(double number);
 Exp_node * createVar(char var);
+Exp_node * createVar(char * var_name);
 Exp_node * createOp(Operator op);
 Exp_node * createOp(int operation);
 
