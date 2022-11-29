@@ -4,6 +4,7 @@
 #include <assert.h>
 
 #include "tree.h"
+#include "calc_f.h"
 #include "matan_killer_debug.h"//TODO debuger is external
 
 Exp_node * nodeConnect(Exp_node *parent, const char dest)
@@ -87,7 +88,7 @@ int copySingle(const Exp_node * node, Exp_node *new_node)
 
 }
 
-Exp_node * copy(Exp_node * node)
+Exp_node * copy(const Exp_node * node)
 {
     if (!node)
         return nullptr;
@@ -133,6 +134,82 @@ int copyNodeData(const Exp_node *src_node, Exp_node *dest_node)
 
     return 0;
 
+}
+
+int getVarIndex(Var v_arr[], const char * var_name)
+{
+    int var_index = NUMBER_OF_VARS;
+
+    for (int counter = 0; counter < NUMBER_OF_VARS; counter++)
+    {
+        if(v_arr[counter].var_name == NULL)
+        {
+            var_index = counter;
+            v_arr[counter].var_name = strdup(var_name);
+            break;
+
+        }else if (stringEquals(var_name, v_arr[counter].var_name))
+        {
+            var_index = counter;
+            break;
+        }
+
+    }
+
+    if (var_index == NUMBER_OF_VARS)
+    {
+        printf("TOO MANY VARIABLES! EXPAND THE SIZE OF ARR!\n");
+        return -1;
+    }
+
+    return var_index;
+}
+
+int addVarByIndex(Var v_arr[], double value, size_t index)
+{
+    if (index >= NUMBER_OF_VARS || v_arr[index].var_name == NULL)
+    {
+        printf("Cannot find current index!\n");
+        DBG_OUT;
+        return -1;
+
+    }else if(v_arr[index].value != 0)
+    {
+        printf("WARNING! You're trying to overwrite the value of variable that already has one!\n");
+        DBG_OUT;
+    }
+
+    v_arr[index].value = value;
+
+    return 0;
+}
+
+int addValueToVarArray(Var v_arr[], double value, const char *var_name)
+{
+    int var_index = getVarIndex(v_arr, var_name);
+
+    return addVarByIndex(v_arr, value, var_index);
+    
+}
+
+int varArrayDtor(Var v_arr[])
+{
+    for (int counter = 0; counter < NUMBER_OF_VARS && v_arr[counter].var_name != NULL; counter++)
+    {
+        v_arr[counter].value = 0;
+        free(v_arr[counter].var_name);
+    }
+
+    return 0;
+}
+
+int dumpVarArray(Var v_arr[])
+{
+    for (int counter = 0; counter < NUMBER_OF_VARS; counter++)
+    {
+        printf("VAR[%d] = {%s, %g}\n", counter, v_arr[counter].var_name, v_arr[counter].value);
+    }
+    return 0;
 }
 
 Exp_node * createNode(Node_type type, Value value, Exp_node * l_son, Exp_node * r_son)

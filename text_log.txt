@@ -4,8 +4,8 @@
   buf_length = 3
   number_of_lines = 1
   buf: 
-x^7
+x+y
 	Lines: 
-x^7| length = 3
+x+y| length = 3
 
 ************************************************************

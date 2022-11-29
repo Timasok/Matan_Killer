@@ -41,6 +41,8 @@ int readExpression(Exp_node *exp_node, const char * remainder, size_t shift, int
 
 int parseTerminalNode(Exp_node *exp_node, const char * parsing_start, size_t parsing_length);
 
+Exp_node * differentiate_n_times(Exp_node **exp_node, size_t number);
+
 Exp_node * differentiate(const Exp_node *exp_node);
 
 Exp_node * simplifyTreeRolls(Exp_node *node);

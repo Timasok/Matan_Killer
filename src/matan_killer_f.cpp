@@ -445,6 +445,7 @@ int wrapEquivalents(Exp_node *node)
 
 }
 
+
 #define DEF_OP(op_name, priority, op_code, num, oper, str_for_tex)                                                     \
     else if (node->value.op_value == op_code)                                                   \
     {                                                                                           \
@@ -914,6 +915,40 @@ Exp_node * differentiate(const Exp_node *node)
     // printf("before simplifying %p\n", new_node);
 
     return new_node;
+
+}
+
+Exp_node * differentiate_n_times(Exp_node **node, size_t number)
+{
+    Exp_node * last_diff = copy(*node);
+
+    saveMicroTransform(*node);
+    saveMicroTransform(last_diff);
+
+    Exp_node * new_diff = NULL;
+
+    if (number == 0)
+    {   
+        return last_diff;
+
+    } else {
+
+        for (size_t counter = 1; counter <= number; counter++)
+        {
+            // last_diff = new_diff;
+            // new_diff = differentiate(last_diff);
+
+            // TREE_DUMP(new_diff);
+
+            // if (new_diff == last_diff)
+            //     break;
+
+            // nodeDtor(last_diff);
+            // free(last_diff);
+        }
+    
+        return new_diff;
+    }
 
 }
 

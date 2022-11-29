@@ -8,8 +8,18 @@
 #include "calc_f.h"
 
 int main()
-{   
-    openLogs();
+{
+    Var v_arr[NUMBER_OF_VARS] = {};
+
+    getVarIndex(v_arr, "x");
+    getVarIndex(v_arr, "x");
+    getVarIndex(v_arr, "y");
+    getVarIndex(v_arr, "z_1");
+    getVarIndex(v_arr, "z_2");
+
+    dumpVarArray(v_arr);
+    varArrayDtor(v_arr);
+/*    openLogs();
     Text_info text1 = {};
     
     textCtor(&text1, "expression.input");
@@ -24,15 +34,24 @@ int main()
     TREE_DUMP(result);
 
     Exp_node * diff_func = differentiate(result);
-
     simplifyTree(&diff_func);
-    
+
+    Exp_node * diff_copy = differentiate(diff_func);
+    simplifyTree(&diff_copy);
+        
     TREE_DUMP_OPTIONAL(diff_func, "after differentiation");
     printIn(diff_func);
     printf("\n");
 
     nodeDtor(diff_func);
     free(diff_func);
+
+    TREE_DUMP_OPTIONAL(diff_copy, "after double differentiation");
+    printIn(diff_copy);
+    printf("\n");
+
+    nodeDtor(diff_copy);
+    free(diff_copy);
 
     nodeDtor(result);
     free(result);
@@ -41,6 +60,7 @@ int main()
 
     openPDF();
     closeLogs();
+*/    
     
     return 0;
 }

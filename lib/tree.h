@@ -4,6 +4,7 @@
 // #define DEBUG 47
 
 const int MAX_BUFFER_LENGTH = 512;
+const int NUMBER_OF_VARS = 16; 
 
 #define ASSERT(condition)                                               \
     do{                                                                 \
@@ -13,7 +14,6 @@ const int MAX_BUFFER_LENGTH = 512;
                      #condition, __FILE__, __FUNCTION__, __LINE__);     \
         }                                                               \
     } while(0)                                                          \
-
 
 struct Node
 {
@@ -72,9 +72,22 @@ struct Exp_node
     
 };
 
+struct Var
+{
+    char *var_name;
+    double value;
+
+};
+
 Exp_node * nodeConnect(Exp_node *parent, const char dest);
 Exp_node * nodeConnect(Node_type type, Value value, Exp_node * l_son, Exp_node * r_son);
 Exp_node * nodeCtor();
+
+int addValueToVarArray(Var v_arr[], double value, const char *var_name);
+int addVarByIndex(Var v_arr[], double value, size_t index);
+int getVarIndex(Var v_arr[], const char * var_name);
+int dumpVarArray(Var v_arr[]);
+int varArrayDtor(Var v_arr[]);
 
 Exp_node * createNode(Node_type type, Value value, Exp_node * l_son, Exp_node * r_son);
 Exp_node * createNum(double number);
@@ -93,7 +106,7 @@ int pickCubs(Exp_node * prev_parent, Exp_node * new_parent);
 bool isTerminal(Exp_node *node);
 bool hasSons(Exp_node *node);
 
-Exp_node * copy(Exp_node * node);
+Exp_node * copy(const Exp_node * node);
 int copyNodeData(const Exp_node *src_node, Exp_node *dest_node);
 int copySingle(const Exp_node * node, Exp_node *new_node);
 
