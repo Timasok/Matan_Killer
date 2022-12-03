@@ -8,6 +8,7 @@
 
     + везде это костыль 
 
+//TODO add constants such as PI and E
 */
 
 DEF_OP(NOT_OP, 0, '\r', -2, +, "")
@@ -39,3 +40,9 @@ DEF_OP(TH, 1, 't', 6, +, "th")
 DEF_OP(ARCTG, 1, '+', 7, +, "arctg")
 
 DEF_OP(ARCCOS, 1,  'W', 8, +, "arccos")
+
+DEF_OP(ARCSIN, 1, 'Q', 9, +, "arsin")
+
+DEF_OP(EXP, 1,  'E', 10, +, "\\exp")
+
+DEF_OP(SQRT, 1, 'F', 11, +, "\\sqrt")

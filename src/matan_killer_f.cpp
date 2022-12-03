@@ -35,6 +35,20 @@ Exp_node * makeLNTree(const Exp_node * argument)
 
 }
 
+Exp_node * makePowTree(const Exp_node * left_argument, double number)
+{
+    Exp_node * result = createOp(POW);
+
+    result->l_son = copy(left_argument);
+    result->r_son = createNum(number);
+
+    result->l_son->parent = result;
+    result->r_son->parent = result;
+
+    return result;
+
+}
+
 #define DEF_OP(op_name, priority, op_code, num, oper, str_for_tex)                         \
             else if(counter == num)                                 \
             {                                                       \
@@ -156,6 +170,26 @@ bool hasNumSons(Exp_node *node)
         return false;
     }
 }
+
+int hasVariable(const Exp_node *node)
+{
+    int result = 0;
+
+    if (!node)
+        return 0;
+
+    if (node->type == VAR)
+    {
+        return 1;
+
+    } else 
+    {
+       result += hasVariable(node->l_son);
+       result += hasVariable(node->r_son);
+    }
+
+    return result;
+}    
 
 int simplifyTree(Exp_node **node)
 {
@@ -506,21 +540,44 @@ Exp_node * differentiate(const Exp_node *node)
                 }
                 case MUL:
                 {
-                    makeOp(ADD);
-                    
-                //first level
+                    // printf("node var %d node->l_son var %d node->l_son var %d\n", hasVariable(node), hasVariable(node->l_son), hasVariable(node->r_son));
+                    if (!hasVariable(node))
+                    {
+                        free(new_node);
+                        new_node = createNum(0);
 
-                    leftOp(MUL);
-                    rightOp(MUL);
-                    
-                //second level
+                    }else if(hasVariable(node->l_son) && !hasVariable(node->r_son))
+                    {
+                        makeOp(MUL);
 
-                    dL(LEFT_SON, LEFT_SON);
-                    cL(RIGHT_SON, RIGHT_SON);
-                    
-                    dR(RIGHT_SON, RIGHT_SON);
-                    cR(LEFT_SON, LEFT_SON);
+                        copyNode(node, new_node, RIGHT_SON, RIGHT_SON);
+                        diffNode(node, new_node, LEFT_SON, LEFT_SON);
 
+                    }else if(hasVariable(node->r_son) && !hasVariable(node->l_son))
+                    {
+                        makeOp(MUL);
+
+                        copyNode(node, new_node, LEFT_SON, LEFT_SON);
+                        diffNode(node, new_node, RIGHT_SON, RIGHT_SON);
+
+                    }else
+                    {
+                        makeOp(ADD);
+                        
+                    //first level
+
+                        leftOp(MUL);
+                        rightOp(MUL);
+                        
+                    //second level
+
+                        dL(LEFT_SON, LEFT_SON);
+                        cL(RIGHT_SON, RIGHT_SON);
+                        
+                        dR(RIGHT_SON, RIGHT_SON);
+                        cR(LEFT_SON, LEFT_SON);
+
+                    }
                     break;
 
                 }
@@ -549,7 +606,31 @@ Exp_node * differentiate(const Exp_node *node)
                         cRRR(LEFT_SON, RIGHT_SON);
                         mRRR(RIGHT_SON, 1);
 
-                    }else {
+                    }else if(node->l_son->type == NUM)
+                    {
+                        makeOp(MUL);
+
+                    //creating first level
+                        leftOp(MUL);
+                        d(RIGHT_SON, RIGHT_SON);
+
+                    //second level
+
+                        Exp_node * ln_node = makeLNTree(node->l_son);
+
+                        TREE_DUMP_OPTIONAL(ln_node, "make ln tree");
+
+                        copyNode(ln_node, new_node->l_son, LEFT_SON);
+                        copyNode(node, new_node->l_son, RIGHT_SON);
+                        
+                        nodeDtor(&ln_node);
+
+                        // TREE_DUMP_OPTIONAL(new_node, "resulted node");
+
+                        break;
+                    
+                    }else
+                    {
                         
                         makeOp(MUL);
 
@@ -699,6 +780,93 @@ Exp_node * differentiate(const Exp_node *node)
                     TREE_DUMP_OPTIONAL(new_node, "tan");
                     break;
                 }
+                case TH:
+                {
+                    makeOp(DIV);
+
+                    d(LEFT_SON, RIGHT_SON);
+                    rightOp(POW);
+
+                    right_left_Op(CH);
+                    mR(RIGHT_SON, 2);
+
+                    cRL(RIGHT_SON, RIGHT_SON);
+                    mRL(LEFT_SON, 0);
+
+                    TREE_DUMP_OPTIONAL(new_node, "th");
+                    break;
+                }
+                case CH:
+                {
+                    makeOp(MUL);
+
+                //creating first level
+                    d(RIGHT_SON, RIGHT_SON);
+                    leftOp(SH);
+
+                //second level
+
+                    mL(LEFT_SON, 0);
+                    cL(RIGHT_SON, RIGHT_SON);
+
+                    break;
+                }
+                case SH:
+                {
+                    makeOp(MUL);
+
+                //creating first level
+                    d(RIGHT_SON, RIGHT_SON);
+                    leftOp(CH);
+
+                //second level
+
+                    mL(LEFT_SON, 0);
+                    cL(RIGHT_SON, RIGHT_SON);
+
+                    break;
+                }
+                case EXP:
+                {
+                    makeOp(MUL);
+
+                //creating first level
+                    d(RIGHT_SON, RIGHT_SON);
+                    leftOp(EXP);
+
+                //second level
+
+                    mL(LEFT_SON, 0);
+                    cL(RIGHT_SON, RIGHT_SON);
+
+                    break;
+                }
+                case ARCSIN:
+                {
+                    makeOp(MUL);
+
+                    d(RIGHT_SON, RIGHT_SON);
+
+                    leftOp(POW);
+                    mL(RIGHT_SON, -0.5);
+
+                    left_left_Op(SUB);
+
+                    Exp_node * pow_node = makePowTree(node->r_son, 2);
+
+                    TREE_DUMP_OPTIONAL(pow_node, "make pow tree");
+
+                    copyNode(pow_node, new_node->l_son->l_son, RIGHT_SON);
+                    mLL(LEFT_SON, 1);
+                
+                    nodeDtor(&pow_node);
+
+                    TREE_DUMP_OPTIONAL(new_node, "arcsin diff");
+
+                    // closeLogs();
+
+                    break;
+                }
                 default:
                     printf("go f smbdy");
                     break;
@@ -749,6 +917,35 @@ Exp_node * differentiate_n_times(Exp_node **node, size_t number)
         return new_diff;
     }
 
+}
+
+Exp_node * differentiatePartialy(const Exp_node *node, Var v_arr[])
+{
+    fillVarValues(v_arr);
+    // dumpVarArray(v_arr);
+    // DBG_OUT;
+    
+    char var_name[MAX_BUFFER_LENGTH] = {};
+
+    do {
+
+        printf("Enter name of variable that you want to partialy differentiate: \n");
+        fscanf(stdin, "%*[\n]" );
+        scanf("%[^\n]s", var_name);
+        // STRING_DUMP(var_name);
+        
+    } while (!checkExistence(v_arr, var_name));
+
+    Exp_node * node_copy = copy(node);
+    
+    substitudeVariables(node_copy, v_arr, var_name);
+    TREE_DUMP_OPTIONAL(node_copy, "after variable replacement");
+
+    Exp_node * diff_result = differentiate(node_copy);
+    nodeDtor(&node_copy);
+    
+    //TODO clear v_arr
+    return diff_result;
 }
 
 int diffNode(const Exp_node *argument, Exp_node * result, const char linking_side_in_copy)

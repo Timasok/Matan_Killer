@@ -1,11 +1,11 @@
 
 ************************************************************
   code_of_error = 0
-  buf_length = 9
+  buf_length = 5
   number_of_lines = 1
   buf: 
-tan(x_4) 
+x+y*z
 	Lines: 
-tan(x_4) | length = 9
+x+y*z| length = 5
 
 ************************************************************

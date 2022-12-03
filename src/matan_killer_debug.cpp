@@ -309,8 +309,6 @@ int saveMicroTransform(const Exp_node *node)
 
 int openPDF()
 {   
-    // fclose(TEX_LOG);    
-    // printf("TeX = %p\n", TEX_LOG);
 
     TEX_LOG = fopen(TEX_LOG_PATH, "a+");
 
@@ -425,11 +423,11 @@ int printInOrderTex(const Exp_node *node)
             getTexTranscriptForOp(op, func_name);
             fprintf(TEX_LOG, "%s", func_name);
             
-            fprintf(TEX_LOG, "(");
+            fprintf(TEX_LOG, "{(");
 
             printInOrderTex(node->r_son);
 
-            fprintf(TEX_LOG, ")");
+            fprintf(TEX_LOG, ")}");
         
         } else
         {

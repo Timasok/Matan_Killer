@@ -35,19 +35,23 @@ son equalsOne(Exp_node *node);
 Operator isOp(int symbol);
 bool hasNumSons(Exp_node *node);
 
+int hasVariable(const Exp_node *node);
+
 int getExpression(Text_info *text, Exp_node *main_node);
 
 int readExpression(Exp_node *exp_node, const char * remainder, size_t shift, int free_port);
 
 int parseTerminalNode(Exp_node *exp_node, const char * parsing_start, size_t parsing_length);
 
-Exp_node * makeLNTree(const Exp_node * argument);
-
 Exp_node * differentiate_n_times(Exp_node **exp_node, size_t number);
 
 Exp_node * differentiate(const Exp_node *exp_node);
+Exp_node * differentiatePartialy(const Exp_node *node, Var v_arr[]);
 
 Exp_node * simplifyTreeRolls(Exp_node *node);
+
+Exp_node * makeLNTree(const Exp_node * argument);
+Exp_node * makePowTree(const Exp_node * left_argument, double number);
 
 int simplifyTree(Exp_node **node);
 int wrapEquivalents(Exp_node *node);

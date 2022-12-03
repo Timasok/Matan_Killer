@@ -1,2 +1,2 @@
 
-(evince:86143): dbind-WARNING **: 12:29:57.416: Couldn't connect to accessibility bus: Failed to connect to socket /run/user/1000/at-spi/bus: Permission denied
+(evince:15198): dbind-WARNING **: 16:48:07.154: Couldn't connect to accessibility bus: Failed to connect to socket /run/user/1000/at-spi/bus: Permission denied

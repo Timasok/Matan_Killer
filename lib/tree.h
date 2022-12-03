@@ -86,6 +86,7 @@ Exp_node * nodeCtor();
 
 
 int getVarIndex(Var v_arr[], const char * name);
+int getVarValue(Var v_arr[], const char * name);
 int addValueToVarArray(Var v_arr[], double value, const char *name);
 int addVarValueByIndex(Var v_arr[], double value, size_t index);
 int addVarNameByIndex(Var v_arr[], char * name, size_t index);
@@ -100,6 +101,11 @@ Exp_node * createVar(char var);
 Exp_node * createVar(char * var_name);
 Exp_node * createOp(Operator op);
 Exp_node * createOp(int operation);
+
+int substitudeVariables(Exp_node *node, Var v_arr[], const char * name_of_not_replaced_var);
+int processVarNode(Exp_node *node, Var v_arr[], const char * var_name);
+int fillVarValues(Var v_arr[]);
+bool checkExistence(Var v_arr[], const char * name);
 
 #define CREATE_OP(op_name)          \
     createOp( ##op_name)

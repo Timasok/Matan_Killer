@@ -197,6 +197,40 @@ int getVarIndex(Var v_arr[], const char * name)
     return var_index;
 }
 
+bool checkExistence(Var v_arr[], const char * name)
+{
+    // STRING_DUMP(name);
+
+    for (int counter = 0; counter < NUMBER_OF_VARS  && v_arr[counter].name != NULL; counter++)
+    {
+        if (stringEquals(name, v_arr[counter].name))
+        {
+
+            return true;
+        }
+
+    }
+
+    return false;
+}
+
+int getVarValue(Var v_arr[], const char * name)
+{
+    double result = NULL;
+
+    for (int counter = 0; counter < NUMBER_OF_VARS && v_arr[counter].name != NULL; counter++)
+    {
+        if (stringEquals(name, v_arr[counter].name))
+        {
+            result = v_arr[counter].value;
+            break;
+        }
+
+    }
+
+    return result;
+}
+
 int addVarValueByIndex(Var v_arr[], double value, size_t index)
 {
     if (index >= NUMBER_OF_VARS || v_arr[index].name == NULL)
@@ -264,6 +298,51 @@ int dumpVarArray(Var v_arr[])
     {
         printf("VAR[%d] = {%s, %g}\n", counter, v_arr[counter].name, v_arr[counter].value);
     }
+    return 0;
+}
+
+int processVarNode(Exp_node *node, Var v_arr[], const char * var_name)
+{
+    double possible_replace = getVarValue(v_arr, var_name);
+
+    if (possible_replace != NULL)
+    {
+        node->type = NUM;
+        free(node->value.var.name);
+        node->value.dbl_value = possible_replace;
+    }
+
+    return 0;
+}
+
+int substitudeVariables(Exp_node *node, Var v_arr[], const char * name_of_not_replaced_var)
+{
+    if (!node)
+        return 0;
+
+    if (node->type == VAR && !stringEquals(name_of_not_replaced_var, node->value.var.name))
+    {
+        processVarNode(node, v_arr, node->value.var.name);
+    }
+
+    substitudeVariables(node->l_son, v_arr, name_of_not_replaced_var);
+
+    substitudeVariables(node->r_son, v_arr, name_of_not_replaced_var);
+
+    return 0;
+}
+
+int fillVarValues(Var v_arr[])
+{
+    printf("Enter values: \n");
+
+    for (int counter = 0; counter < NUMBER_OF_VARS && v_arr[counter].name != NULL; counter++)
+    {   
+        // fscanf(stdin, "%*[\n]" );
+        printf("%s: =  ", v_arr[counter].name);
+        scanf("%lf", &v_arr[counter].value);
+    }
+
     return 0;
 }
 

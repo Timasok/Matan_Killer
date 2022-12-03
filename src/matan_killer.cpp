@@ -34,7 +34,9 @@ int main()
 
     TREE_DUMP(result);
 
-    Exp_node * diff_func = differentiate(result);
+    Exp_node * diff_func = differentiatePartialy(result, v_arr);
+
+    // Exp_node * diff_func = differentiate(result);
     simplifyTree(&diff_func);
 
     // Exp_node * diff_func = makeLNTree(result->l_son);
