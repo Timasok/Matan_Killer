@@ -112,7 +112,16 @@ int copyNodeData(const Exp_node *src_node, Exp_node *dest_node)
 
 
     dest_node->type = src_node->type;
-    dest_node->value = src_node->value;
+    
+    if (src_node->type == VAR)
+    {
+        dest_node->value.var.name = strdup(src_node->value.var.name);
+        dest_node->value.var.value = src_node->value.var.value;
+    }else
+    {
+        dest_node->value = src_node->value;
+
+    }
 
     if (src_node->l_son)
     {
@@ -136,21 +145,44 @@ int copyNodeData(const Exp_node *src_node, Exp_node *dest_node)
 
 }
 
+int fillVarArray(Var v_arr[], Exp_node * node, size_t free_index)
+{
+    if (!node)
+        return 0;
+
+    if (node->type == VAR)
+    {
+        free_index = addVarNameByIndex(v_arr, node->value.var.name, free_index);
+    }
+
+    if (node->l_son)
+    {
+        fillVarArray(v_arr, node->l_son, free_index);        
+    }
+
+    if (node->r_son)
+    {
+        fillVarArray(v_arr, node->r_son, free_index);
+    }
+
+    return 0;
+}
+
 int getVarIndex(Var v_arr[], const char * name)
 {
     int var_index = NUMBER_OF_VARS;
 
     for (int counter = 0; counter < NUMBER_OF_VARS; counter++)
     {
+        var_index = counter;
+
         if(v_arr[counter].name == NULL)
         {
-            var_index = counter;
             v_arr[counter].name = strdup(name);
             break;
 
         }else if (stringEquals(name, v_arr[counter].name))
         {
-            var_index = counter;
             break;
         }
 
@@ -165,11 +197,11 @@ int getVarIndex(Var v_arr[], const char * name)
     return var_index;
 }
 
-int addVarByIndex(Var v_arr[], double value, size_t index)
+int addVarValueByIndex(Var v_arr[], double value, size_t index)
 {
     if (index >= NUMBER_OF_VARS || v_arr[index].name == NULL)
     {
-        printf("Cannot find current index!\n");
+        printf("Cannot find current index %d!\n", index);
         DBG_OUT;
         return -1;
 
@@ -184,11 +216,34 @@ int addVarByIndex(Var v_arr[], double value, size_t index)
     return 0;
 }
 
+int addVarNameByIndex(Var v_arr[], char * name, size_t index)
+{
+    int new_index = index;
+
+    if (index >= NUMBER_OF_VARS)
+    {
+        printf("Cannot find current index %d!\n", index);
+        DBG_OUT;
+        return -1;
+
+    }else if(v_arr[index].name != NULL)
+    {
+        new_index = getVarIndex(v_arr, name) + 1;
+
+    }else
+    {
+        v_arr[index].name = strdup(name);
+        new_index = index + 1;
+    }
+
+    return new_index;
+}
+
 int addValueToVarArray(Var v_arr[], double value, const char *name)
 {
     int var_index = getVarIndex(v_arr, name);
 
-    return addVarByIndex(v_arr, value, var_index);
+    return addVarValueByIndex(v_arr, value, var_index);
     
 }
 
@@ -432,7 +487,10 @@ int nodeDtor(Exp_node *node)
             if (node->type == VAR)
             {
                 if (node->value.var.name != NULL)
+                {
                     free(node->value.var.name);
+                    node->value.var.name = NULL;
+                }
             }
 
             free(node);
@@ -447,6 +505,14 @@ int nodeDtor(Exp_node *node)
 
     
     
+    return 0;
+}
+
+int nodeDtor(Exp_node **node)
+{
+    nodeDtor(*node);
+    free(*node);
+
     return 0;
 }
 

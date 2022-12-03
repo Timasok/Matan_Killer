@@ -84,9 +84,13 @@ Exp_node * nodeConnect(Exp_node *parent, const char dest);
 Exp_node * nodeConnect(Node_type type, Value value, Exp_node * l_son, Exp_node * r_son);
 Exp_node * nodeCtor();
 
-int addValueToVarArray(Var v_arr[], double value, const char *name);
-int addVarByIndex(Var v_arr[], double value, size_t index);
+
 int getVarIndex(Var v_arr[], const char * name);
+int addValueToVarArray(Var v_arr[], double value, const char *name);
+int addVarValueByIndex(Var v_arr[], double value, size_t index);
+int addVarNameByIndex(Var v_arr[], char * name, size_t index);
+
+int fillVarArray(Var v_arr[], Exp_node * node, size_t free_index);
 int dumpVarArray(Var v_arr[]);
 int varArrayDtor(Var v_arr[]);
 
@@ -114,6 +118,7 @@ int copySingle(const Exp_node * node, Exp_node *new_node);
 
 Exp_node * findNode(Exp_node *node, const char *string);//TODO change completely this function do we need her?
 int nodeDtor(Exp_node *node);
+int nodeDtor(Exp_node **node);
 
 void printPre(const Exp_node * node);
 void printIn(const Exp_node * node);

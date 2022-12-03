@@ -16,8 +16,6 @@ int main()
     // getVarIndex(v_arr, "y");
     // getVarIndex(v_arr, "z_1");
     // getVarIndex(v_arr, "z_2");
-
-    // dumpVarArray(v_arr);
     
     openLogs();
     Text_info text1 = {};
@@ -28,41 +26,43 @@ int main()
 
     Exp_node * result = getGeneral(text1.buf);
 
+    fillVarArray(v_arr, result, 0);
+    dumpVarArray(v_arr);
+
     printIn(result);
     printf("\n");
 
     TREE_DUMP(result);
 
-/*
     Exp_node * diff_func = differentiate(result);
     simplifyTree(&diff_func);
 
+    // Exp_node * diff_func = makeLNTree(result->l_son);
+
+/*
     Exp_node * diff_copy = differentiate(diff_func);
     simplifyTree(&diff_copy);
-        
-    TREE_DUMP_OPTIONAL(diff_func, "after differentiation");
-    printIn(diff_func);
-    printf("\n");
-
-    nodeDtor(diff_func);
-    free(diff_func);
-
     TREE_DUMP_OPTIONAL(diff_copy, "after double differentiation");
     printIn(diff_copy);
     printf("\n");
 
     nodeDtor(diff_copy);
     free(diff_copy);
-*/
-    
-    nodeDtor(result);
-    free(result);
 
+*/
+            
+    TREE_DUMP_OPTIONAL(diff_func, "after differentiation");
+    printIn(diff_func);
+    printf("\n");
+
+    nodeDtor(&diff_func);
+    nodeDtor(&result);
     textDtor(&text1);
 
     openPDF();
+
     closeLogs();
-    
+
     varArrayDtor(v_arr);
     
     return 0;

@@ -41,6 +41,8 @@ int readExpression(Exp_node *exp_node, const char * remainder, size_t shift, int
 
 int parseTerminalNode(Exp_node *exp_node, const char * parsing_start, size_t parsing_length);
 
+Exp_node * makeLNTree(const Exp_node * argument);
+
 Exp_node * differentiate_n_times(Exp_node **exp_node, size_t number);
 
 Exp_node * differentiate(const Exp_node *exp_node);
@@ -53,6 +55,9 @@ int computeConstants(Exp_node *node);
 
 int rollUpTree(Exp_node *node);
 int processOneZeroCases(Exp_node *node);
+
+int diffNode(const Exp_node *argument, Exp_node * result, const char linking_side_in_copy);
+int copyNode(const Exp_node *argument, Exp_node * result, const char linking_side_in_copy);
 
 int diffNode(const Exp_node *argument, Exp_node * result, const char linking_side_in_copy, const char src_side);
 int copyNode(const Exp_node *argument, Exp_node * result, const char linking_side_in_copy, const char src_side);

@@ -4,8 +4,8 @@
   buf_length = 9
   number_of_lines = 1
   buf: 
-x^2 + x_2
+tan(x_4) 
 	Lines: 
-x^2 + x_2| length = 9
+tan(x_4) | length = 9
 
 ************************************************************

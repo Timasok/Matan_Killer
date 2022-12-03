@@ -20,6 +20,21 @@ static bool equals(const double num_1, const double num_2)
 
 }
 
+//TODO try not to create 0 nodes at the left
+Exp_node * makeLNTree(const Exp_node * argument)
+{
+    Exp_node * result = createOp(LN);
+
+    result->r_son = copy(argument);
+    result->l_son = createNum(0);
+
+    result->l_son->parent = result;
+    result->r_son->parent = result;
+
+    return result;
+
+}
+
 #define DEF_OP(op_name, priority, op_code, num, oper, str_for_tex)                         \
             else if(counter == num)                                 \
             {                                                       \
@@ -194,7 +209,7 @@ int computeConstants(Exp_node *node)
     } 
     else 
     {
-        
+        //TODO check if we need them at all
         if (node->l_son)
         {
             Exp_node *left_result = node->l_son;
@@ -513,7 +528,6 @@ Exp_node * differentiate(const Exp_node *node)
                 {
                     if (node->r_son->type == NUM)
                     {
-                   
                         makeOp(MUL);
 
                     //creating first level
@@ -550,23 +564,42 @@ Exp_node * differentiate(const Exp_node *node)
 
                         right_left_Op(MUL);
                         right_right_Op(MUL);
-                                       
+
                     //third level
 
-                        right_left_left_Op(DIV);
-                        dRL(RIGHT_SON, LEFT_SON);
-
                         dRR(LEFT_SON, RIGHT_SON);
-                        right_right_right_Op(LN);
+                        cRL(RIGHT_SON, RIGHT_SON);
 
-                    //fourth level
+                        Exp_node * ln_node = makeLNTree(node->l_son);
 
-                        cRLL(LEFT_SON, LEFT_SON);
-                        cRLL(RIGHT_SON, RIGHT_SON);
+                        TREE_DUMP_OPTIONAL(ln_node, "make ln tree");
 
-                        mRRR(LEFT_SON, 0);
-                        cRRR(RIGHT_SON, LEFT_SON);
+                        diffNode(ln_node, new_node->r_son->l_son, LEFT_SON);
+                        copyNode(ln_node, new_node->r_son->r_son, RIGHT_SON);
+                        
+                        TREE_DUMP_OPTIONAL(new_node->r_son->l_son->l_son, "diff of ln tree");
+                        TREE_DUMP_OPTIONAL(new_node, "parent parent parent of diff of ln tree");
 
+                        nodeDtor(&ln_node);
+
+{//old version                        
+                    //third level
+
+                    //     right_left_left_Op(DIV);
+                    //     dRL(RIGHT_SON, LEFT_SON);
+
+                    //     dRR(LEFT_SON, RIGHT_SON);
+                    //     right_right_right_Op(LN);
+
+                    // //fourth level
+
+                    //     cRLL(LEFT_SON, LEFT_SON);
+                    //     cRLL(RIGHT_SON, RIGHT_SON);
+
+                    //     mRRR(LEFT_SON, 0);
+                    //     cRRR(RIGHT_SON, LEFT_SON);
+}
+                    
                     }
 
                     break;
@@ -635,6 +668,7 @@ Exp_node * differentiate(const Exp_node *node)
                 }
                 case LN:
                 {
+
                     makeOp(MUL);
 
                 //first level
@@ -717,6 +751,60 @@ Exp_node * differentiate_n_times(Exp_node **node, size_t number)
 
 }
 
+int diffNode(const Exp_node *argument, Exp_node * result, const char linking_side_in_copy)
+{
+    Exp_node *node = differentiate(argument);
+
+    switch (linking_side_in_copy)
+    {
+        case LEFT_SON:
+
+            result->l_son = node;       
+            break;
+
+        case RIGHT_SON:
+            
+            result->r_son = node;
+            break;
+
+        default:
+            return MATAN_KILLER_ERROR_INCORRECT_DESTINATION_PORT;
+            break;
+            
+    }
+
+    linkSonsToParent(result);
+
+    return 0;
+}
+
+int copyNode(const Exp_node *argument, Exp_node * result, const char linking_side_in_copy)
+{
+    Exp_node *node = copy(argument);
+
+    switch (linking_side_in_copy)
+    {
+        case LEFT_SON:
+            result->l_son = node;       
+            break;
+
+        case RIGHT_SON:
+            
+            result->r_son = node;
+            break;
+
+        default:
+            return MATAN_KILLER_ERROR_INCORRECT_DESTINATION_PORT;
+            break;
+            
+    }
+
+    linkSonsToParent(result);
+
+    return 0;
+}
+
+//this func is to clear because doesn't change the tree itself!
 int diffNode(const Exp_node *argument, Exp_node * result, const char linking_side_in_copy, const char src_side)
 {
     Exp_node *node;

@@ -67,9 +67,11 @@ int openLogs()
     }
 
     fprintf(TEX_LOG,    "\\documentclass{article}\n"
+                        /*"\\documentclass[9pt]{extarticle}\n"*/
                         "\\usepackage[utf8]{inputenc}\n"
                         "\\usepackage{graphicx}\n"
                         "\\usepackage[14pt]{extsizes}\n"
+                        
                         "\\usepackage{amsmath, amsfonts, amssymb, amsthm, mathtools}\n");
                         
     // fprintf(TEX_LOG, "\n\\title{\\textbf{Работа по взятию производной у функции}}\n"
@@ -242,7 +244,7 @@ int printIntroInTex()
 
  fprintf(TEX_LOG,   "Due to the heavy workload at the Department of Higher Cringe, " 
                     "the author of this article has repeatedly postponed the publication "
-                    "of this work. But once the heel pressed, the notebook with differentiation "
+                    "of this work. But once the heel pressed,the notebook with differentiation "
                     "formulas fell out of the briefcase in front of the astonished students in the audience, "
                     "into which they each burst with such enthusiasm in the hope of taking a "
                     "bite out of the great knowledge of matan. After that lecture, "
@@ -250,7 +252,7 @@ int printIntroInTex()
                     "with shaking hands turning over the abstract and whispering something, "
                     "we finally decided to publish those of his drafts that will be understandable to the masses. ");
 
-    fprintf(TEX_LOG,  "\\section{Work process}\n");
+    fprintf(TEX_LOG,  "\n\\section{Work process}\n");
 
 
     return 0;
@@ -269,7 +271,7 @@ int treeDump(Exp_node *node , const char * operation_info, const char *name_of_f
      
     if (strlen(operation_info) > 0)
     {
-        fprintf(HTM_LOG, "\t\tOPERATION INFO %s<h2>", operation_info);
+        fprintf(HTM_LOG, "\n\t\tOPERATION INFO %s<h2>", operation_info);
         fprintf(TEX_LOG, "\\textbf{%s:}\n", operation_info);    
     }
 
@@ -307,6 +309,8 @@ int saveMicroTransform(const Exp_node *node)
 
 int openPDF()
 {   
+    // fclose(TEX_LOG);    
+    // printf("TeX = %p\n", TEX_LOG);
 
     TEX_LOG = fopen(TEX_LOG_PATH, "a+");
 
@@ -314,12 +318,14 @@ int openPDF()
     fflush(TEX_LOG);
 
     fclose(TEX_LOG);
-    
+
     char command[512] ={};
+
     sprintf(command, "pdflatex %s > nul 2>&1", TEX_LOG_PATH);
+    // sprintf(command, "pdflatex %s", TEX_LOG_PATH);
 
     system(command);
-
+        // DBG_OUT;
     system("xdg-open log.pdf > nul 2>&1");
     TEX_LOG = fopen(TEX_LOG_PATH, "a+");
 
@@ -473,55 +479,5 @@ int printInOrderTex(const Exp_node *node)
     return 0;
 
 }
-
-// int print_tree(const Node *node, const Mode_of_print mode)
-// {
-//     if (!node) 
-//     {
-//         return 0;
-//     }
-//     Operation op = node->value.op_value;
-//     if (op == DIV)
-//         fprintf(TEX_LOG, "\\frac{");
-
-//     if (node->parent && node->priority && node->parent->priority > node->priority)
-//     {
-//         fprintf(TEX_LOG, "(");
-//     }
-
-//     PRINT_DIFF_IN_LOG_IF(mode == PREORDER, node);
-
-//     if(node->l_son)
-//         {   
-//             tree_print(node->l_son, mode);
-//         }
-
-//     PRINT_DIFF_IN_LOG_IF(mode == INORDER, node);
-
-//     if (op == DIV)
-//         fprintf(TEX_LOG, "}{");
-
-//     if(op == DEGREE)
-//         fprintf(TEX_LOG, "{");
-
-//     if (node->r_son)
-//     {
-//         tree_print(node->r_son, mode);
-//     }
-    
-//     PRINT_DIFF_IN_LOG_IF(mode == POSTORDER, node);
-    
-//     if (node->parent && node->priority && node->parent->priority > node->priority)
-//     {
-//         fprintf(TEX_LOG, ")");
-//     }
-
-//     if (op == DIV || op == DEGREE)
-//         fprintf(TEX_LOG, "}");
-
-//     fflush(TEX_LOG);
-//     return 0;
-// }
-
 
 #undef PRINT_DOT
