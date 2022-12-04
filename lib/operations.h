@@ -37,7 +37,7 @@ DEF_OP(CH, 1, 'c', 5, +, "ch")
 
 DEF_OP(TH, 1, 't', 6, +, "th")
 
-DEF_OP(ARCTG, 1, '+', 7, +, "arctg")
+DEF_OP(ARCTG, 1, 'u', 7, +, "arctg")
 
 DEF_OP(ARCCOS, 1,  'W', 8, +, "arccos")
 

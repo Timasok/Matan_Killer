@@ -320,7 +320,7 @@ int substitudeVariables(Exp_node *node, Var v_arr[], const char * name_of_not_re
     if (!node)
         return 0;
 
-    if (node->type == VAR && !stringEquals(name_of_not_replaced_var, node->value.var.name))
+    if (node->type == VAR && (name_of_not_replaced_var == NULL || !stringEquals(name_of_not_replaced_var, node->value.var.name)))
     {
         processVarNode(node, v_arr, node->value.var.name);
     }

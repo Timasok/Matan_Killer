@@ -48,6 +48,9 @@ Exp_node * differentiate_n_times(Exp_node **exp_node, size_t number);
 Exp_node * differentiate(const Exp_node *exp_node);
 Exp_node * differentiatePartialy(const Exp_node *node, Var v_arr[]);
 
+double calculateTree(Exp_node *node, Var v_arr[]);
+int calculateNumTree(Exp_node *node);
+
 Exp_node * simplifyTreeRolls(Exp_node *node);
 
 Exp_node * makeLNTree(const Exp_node * argument);

@@ -34,10 +34,17 @@ int main()
 
     TREE_DUMP(result);
 
+    // Exp_node * res_cpy = copy(result);
+    // calculateNumTree(res_cpy);
+
+    // printf("calculated = %g\n", res_cpy->value.dbl_value);
+
+    printf("calculated = %g\n", calculateTree(copy(result), v_arr));
+
     Exp_node * diff_func = differentiatePartialy(result, v_arr);
+    // simplifyTree(&diff_func);
 
     // Exp_node * diff_func = differentiate(result);
-    simplifyTree(&diff_func);
 
     // Exp_node * diff_func = makeLNTree(result->l_son);
 
@@ -61,7 +68,7 @@ int main()
     nodeDtor(&result);
     textDtor(&text1);
 
-    openPDF();
+    // openPDF();
 
     closeLogs();
 

@@ -921,6 +921,12 @@ Exp_node * differentiate_n_times(Exp_node **node, size_t number)
 
 Exp_node * differentiatePartialy(const Exp_node *node, Var v_arr[])
 {
+    if (!hasVariable(node))
+    {
+        printf("Can't differentiate num expression!\n");
+        return NULL;
+    }
+
     fillVarValues(v_arr);
     // dumpVarArray(v_arr);
     // DBG_OUT;
@@ -946,6 +952,153 @@ Exp_node * differentiatePartialy(const Exp_node *node, Var v_arr[])
     
     //TODO clear v_arr
     return diff_result;
+}
+
+double calculateTree(Exp_node *node, Var v_arr[])
+{
+    fillVarValues(v_arr);
+
+    substitudeVariables(node, v_arr, NULL);
+
+    if (hasVariable(node))
+    {
+        printf("YOU HAVE A VARIABLE IN CALCUlATED TREE!\n");
+        return 0;
+    }
+
+    calculateNumTree(node);
+
+    double result = node->value.dbl_value;
+    
+    free(node);
+
+    return result;
+
+}
+
+int calculateNumTree(Exp_node *node)
+{
+    if (!node)
+        return 0;
+
+    // printIn(node);
+    // printf("\n");
+    
+    if (node->type == OP && hasNumSons(node))
+    {
+        Value val = {};
+
+        double new_value = 0;
+        double left_operand = node->l_son->value.dbl_value;
+        double right_operand = node->r_son->value.dbl_value;
+        
+        switch (node->value.op_value)
+        {
+            case ADD:
+            {
+                new_value = left_operand + right_operand;
+                break;                
+            }
+            case SUB:
+            {
+                new_value = left_operand - right_operand;
+                break;                
+            }
+            case MUL:
+            {
+                new_value = left_operand * right_operand;
+                break;                
+            }
+            case DIV:
+            {
+                new_value = left_operand / right_operand;
+                break;                
+            }
+            case POW:
+            {
+                new_value = pow(left_operand, right_operand);
+                break;                
+            }
+            case SIN:
+            {
+                new_value = sin(right_operand);
+                break;                
+            }
+            case LN:
+            {
+                new_value = log(right_operand);
+                break;                
+            }
+            case COS:
+            {
+                new_value = log(right_operand);
+                break;                
+            }
+            case TAN:
+            {
+                new_value = tan(right_operand);
+                break;                
+            }
+            case SH:
+            {
+                new_value = sinh(right_operand);
+                break;                
+            }
+            case CH:
+            {
+                new_value = cosh(right_operand);
+                break;                
+            }
+            case ARCTG:
+            {
+                new_value = atan(right_operand);
+                break;                
+            }
+            case ARCSIN:
+            {
+                new_value = asin(right_operand);
+                break;                
+            }
+            case ARCCOS:
+            {
+                new_value = acos(right_operand);
+                break;                
+            }
+
+            default:
+                break;
+        }
+
+        // printf("%g %c %g = %g\n", left_operand, node->value.op_value, right_operand, new_value);
+
+        val.dbl_value = new_value;
+
+        node->type = NUM;
+        node->value = val;
+
+        nodeDtor(node->l_son);
+        nodeDtor(node->r_son);
+
+        return 0;
+
+    }else if (node->type == OP)
+    {
+
+        calculateNumTree(node->l_son);
+
+        calculateNumTree(node->r_son);
+
+    }
+
+    if (node->type != NUM)
+    {
+        calculateNumTree(node);
+    }
+
+    // dumpExpNode(node);
+
+    return 0;
+
 }
 
 int diffNode(const Exp_node *argument, Exp_node * result, const char linking_side_in_copy)
