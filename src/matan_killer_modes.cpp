@@ -72,7 +72,7 @@ int processSelectedMode(Exp_node * initial_tree, Var v_arr [])
             }
             case ARRANGE_IN_A_ROW:
             {
-                //
+                
                 break;
             }
             case SIMPLIFY:
@@ -107,6 +107,31 @@ int processSelectedMode(Exp_node * initial_tree, Var v_arr [])
 
 }
 
+Exp_node *arrangeInTeilorRow(const Exp_node *node, Var v_arr[], size_t range)
+{
+    // if (range == 0)
+    // {
+
+    // }
+
+    // Exp_node * copy_node = copy(node);
+
+    // double * ratios = (double *)calloc(range + 1, sizeof(double));
+
+    // fillVarValues(v_arr);
+    // substitudeVariables(copy_node, v_arr, NULL);
+
+    // for (int idx = 1; idx <= range; idx++)
+    // {
+
+
+    // }
+
+    // free(ratios);
+    return nullptr;
+
+}
+
 Exp_node * differentiate_n_times(const Exp_node *node, size_t * number)
 {
     while (1)
@@ -132,7 +157,6 @@ Exp_node * differentiate_n_times(const Exp_node *node, size_t * number)
         {
             for (size_t counter = 1; counter <= *number; counter++)
             {
-
                 Exp_node * new_diff = differentiate(last_diff);
                 
                 saveMicroTransform(new_diff);
@@ -140,15 +164,22 @@ Exp_node * differentiate_n_times(const Exp_node *node, size_t * number)
                 nodeDtor(last_diff);
 
                 if (!hasVariable(new_diff))
+                {
+                    nodeDtor(&new_diff);
+                    DBG_OUT;
                     break;
+                }
 
                 copyNodeData(new_diff, last_diff); 
 
-                char line[MAX_BUFFER_LENGTH] = {};
-                sprintf(line, "after %d differentiation", counter);
+                nodeDtor(&new_diff);
 
-                TREE_DUMP_OPTIONAL(new_diff, line);
-                
+
+                char line[MAX_BUFFER_LENGTH] = {};
+                sprintf(line, "after %ld differentiation", counter);
+
+                TREE_DUMP_OPTIONAL(last_diff, line);
+
             }
         
             return last_diff;

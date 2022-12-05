@@ -12,5 +12,6 @@ SOURCES 	:= $(SRC_DIR)matan_killer.cpp $(SRC_DIR)matan_killer_debug.cpp $(SRC_DI
 EXECUTABLE  := matan_killer
 
 all:
-	mkdir -p graph_dumps 
+	mkdir -p graph_dumps
+	touch expression.input
 	$(CC) $(SOURCES) $(CFLAGS) -o $(EXECUTABLE)

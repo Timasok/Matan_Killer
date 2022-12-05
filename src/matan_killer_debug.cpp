@@ -357,7 +357,7 @@ int getPriority(const Exp_node *node)
 
 static int getTexTranscriptForOp(Operator operation, char * result)
 {
-    ASSERT(result != NULL);
+    ASSERT((result != nullptr));
 
     if (0)
     {}

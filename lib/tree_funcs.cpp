@@ -10,7 +10,7 @@
 
 Exp_node * nodeConnect(Exp_node *parent, const char dest)
 {
-    ASSERT(parent != NULL);
+    ASSERT((parent != nullptr));
 
 #ifdef DEBUG
     printf("\e[0;31mconnect_called to %p dest %d\e[0m\n", parent, dest);
@@ -236,7 +236,7 @@ int addVarValueByIndex(Var v_arr[], double value, size_t index)
 {
     if (index >= NUMBER_OF_VARS || v_arr[index].name == NULL)
     {
-        printf("Cannot find current index %d!\n", index);
+        printf("Cannot find current index %ld!\n", index);
         DBG_OUT;
         return -1;
 
@@ -257,7 +257,7 @@ int addVarNameByIndex(Var v_arr[], char * name, size_t index)
 
     if (index >= NUMBER_OF_VARS)
     {
-        printf("Cannot find current index %d!\n", index);
+        printf("Cannot find current index %ld!\n", index);
         DBG_OUT;
         return -1;
 

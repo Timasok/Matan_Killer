@@ -48,6 +48,7 @@ bool hasNumSons(Exp_node *node);
 
 int hasVariable(const Exp_node *node);
 
+Exp_node *arrangeInTeilorRow(const Exp_node *node, Var v_arr[], size_t range);
 int processSelectedMode(Exp_node * initial_tree, Var v_arr []);
 
 int getExpression(Text_info *text, Exp_node *main_node);
