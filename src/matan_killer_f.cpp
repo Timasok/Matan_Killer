@@ -191,39 +191,6 @@ int hasVariable(const Exp_node *node)
     return result;
 }    
 
-int simplifyTree(Exp_node **node)
-{
-    // ASSERT(node);
-
-    int changes = 0;
-
-    int tmp_changes = 0;
-
-    do {    
-
-        changes = 0;
-
-        changes += wrapEquivalents(*node);
-
-        if (tmp_changes != changes)
-        {
-            saveMicroTransform(*node);
-            tmp_changes = changes;
-        }
-
-        changes += computeConstants(*node);
-
-        if (tmp_changes != changes)
-        {
-            saveMicroTransform(*node);
-            tmp_changes = 0;
-        }
-
-    } while (changes != 0);
-
-    return 0;
-}
-
 int computeConstants(Exp_node *node)
 {
     int changes = 0;
@@ -504,6 +471,8 @@ int processOneZeroCases(Exp_node *node)
 
 Exp_node * differentiate(const Exp_node *node)
 {
+    ASSERT((node != NULL));
+
     Exp_node * new_node;
 
     switch (node->type)
@@ -618,7 +587,7 @@ Exp_node * differentiate(const Exp_node *node)
 
                         Exp_node * ln_node = makeLNTree(node->l_son);
 
-                        TREE_DUMP_OPTIONAL(ln_node, "make ln tree");
+                        // TREE_DUMP_OPTIONAL(ln_node, "make ln tree");
 
                         copyNode(ln_node, new_node->l_son, LEFT_SON);
                         copyNode(node, new_node->l_son, RIGHT_SON);
@@ -881,98 +850,9 @@ Exp_node * differentiate(const Exp_node *node)
 
     // printf("before simplifying %p\n", new_node);
 
+    simplifyTree(&new_node);
+
     return new_node;
-
-}
-
-Exp_node * differentiate_n_times(Exp_node **node, size_t number)
-{
-    Exp_node * last_diff = copy(*node);
-
-    saveMicroTransform(*node);
-    saveMicroTransform(last_diff);
-
-    Exp_node * new_diff = NULL;
-
-    if (number == 0)
-    {   
-        return last_diff;
-
-    } else {
-
-        for (size_t counter = 1; counter <= number; counter++)
-        {
-            // last_diff = new_diff;
-            // new_diff = differentiate(last_diff);
-
-            // TREE_DUMP(new_diff);
-
-            // if (new_diff == last_diff)
-            //     break;
-
-            // nodeDtor(last_diff);
-            // free(last_diff);
-        }
-    
-        return new_diff;
-    }
-
-}
-
-Exp_node * differentiatePartialy(const Exp_node *node, Var v_arr[])
-{
-    if (!hasVariable(node))
-    {
-        printf("Can't differentiate num expression!\n");
-        return NULL;
-    }
-
-    fillVarValues(v_arr);
-    // dumpVarArray(v_arr);
-    // DBG_OUT;
-    
-    char var_name[MAX_BUFFER_LENGTH] = {};
-
-    do {
-
-        printf("Enter name of variable that you want to partialy differentiate: \n");
-        fscanf(stdin, "%*[\n]" );
-        scanf("%[^\n]s", var_name);
-        // STRING_DUMP(var_name);
-        
-    } while (!checkExistence(v_arr, var_name));
-
-    Exp_node * node_copy = copy(node);
-    
-    substitudeVariables(node_copy, v_arr, var_name);
-    TREE_DUMP_OPTIONAL(node_copy, "after variable replacement");
-
-    Exp_node * diff_result = differentiate(node_copy);
-    nodeDtor(&node_copy);
-    
-    //TODO clear v_arr
-    return diff_result;
-}
-
-double calculateTree(Exp_node *node, Var v_arr[])
-{
-    fillVarValues(v_arr);
-
-    substitudeVariables(node, v_arr, NULL);
-
-    if (hasVariable(node))
-    {
-        printf("YOU HAVE A VARIABLE IN CALCUlATED TREE!\n");
-        return 0;
-    }
-
-    calculateNumTree(node);
-
-    double result = node->value.dbl_value;
-    
-    free(node);
-
-    return result;
 
 }
 

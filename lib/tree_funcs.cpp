@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <math.h>
 
 #include "tree.h"
 #include "calc_f.h"
@@ -214,9 +215,9 @@ bool checkExistence(Var v_arr[], const char * name)
     return false;
 }
 
-int getVarValue(Var v_arr[], const char * name)
+double getVarValue(Var v_arr[], const char * name)
 {
-    double result = NULL;
+    double result = NAN;
 
     for (int counter = 0; counter < NUMBER_OF_VARS && v_arr[counter].name != NULL; counter++)
     {
@@ -305,7 +306,9 @@ int processVarNode(Exp_node *node, Var v_arr[], const char * var_name)
 {
     double possible_replace = getVarValue(v_arr, var_name);
 
-    if (possible_replace != NULL)
+    // printf("%g\n", possible_replace);
+
+    if (possible_replace != NAN)
     {
         node->type = NUM;
         free(node->value.var.name);
@@ -339,9 +342,18 @@ int fillVarValues(Var v_arr[])
     for (int counter = 0; counter < NUMBER_OF_VARS && v_arr[counter].name != NULL; counter++)
     {   
         // fscanf(stdin, "%*[\n]" );
+
         printf("%s: =  ", v_arr[counter].name);
-        scanf("%lf", &v_arr[counter].value);
+
+        while (scanf(" %lf", &v_arr[counter].value) != 1)
+        {
+                scanf( "%*[^\n]" );
+                printf("%s: =  ", v_arr[counter].name);
+        }
+
     }
+
+    // dumpVarArray(v_arr);
 
     return 0;
 }
@@ -540,6 +552,11 @@ int nodeDtor(Exp_node *node)
     while(1)
     {
     #ifdef DEBUG
+
+    if (node->parent == nullptr)
+    {
+        printf("%s called for tree\n", __PRETTY_FUNCTION__);
+    }
         printf("\n\e[0;32mдолжны были зафришеть - \e[0m");
         dumpExpNode(node);
     #endif

@@ -86,7 +86,7 @@ Exp_node * nodeCtor();
 
 
 int getVarIndex(Var v_arr[], const char * name);
-int getVarValue(Var v_arr[], const char * name);
+double getVarValue(Var v_arr[], const char * name);
 int addValueToVarArray(Var v_arr[], double value, const char *name);
 int addVarValueByIndex(Var v_arr[], double value, size_t index);
 int addVarNameByIndex(Var v_arr[], char * name, size_t index);

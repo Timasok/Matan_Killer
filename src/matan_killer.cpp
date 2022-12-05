@@ -9,70 +9,32 @@
 
 int main()
 {
-    Var v_arr[NUMBER_OF_VARS] = {};
-
-    // getVarIndex(v_arr, "x");
-    // getVarIndex(v_arr, "x");
-    // getVarIndex(v_arr, "y");
-    // getVarIndex(v_arr, "z_1");
-    // getVarIndex(v_arr, "z_2");
     
     openLogs();
     Text_info text1 = {};
     
     textCtor(&text1, "expression.input");
-
     printText(&text1);
 
     Exp_node * result = getGeneral(text1.buf);
 
+    Var v_arr[NUMBER_OF_VARS] = {};
     fillVarArray(v_arr, result, 0);
-    dumpVarArray(v_arr);
+    // dumpVarArray(v_arr);
 
+    TREE_DUMP_OPTIONAL(result, "initial tree"); 
     printIn(result);
     printf("\n");
-
-    TREE_DUMP(result);
-
-    // Exp_node * res_cpy = copy(result);
-    // calculateNumTree(res_cpy);
-
-    // printf("calculated = %g\n", res_cpy->value.dbl_value);
-
-    printf("calculated = %g\n", calculateTree(copy(result), v_arr));
-
-    Exp_node * diff_func = differentiatePartialy(result, v_arr);
-    // simplifyTree(&diff_func);
-
-    // Exp_node * diff_func = differentiate(result);
-
-    // Exp_node * diff_func = makeLNTree(result->l_son);
-
-/*
-    Exp_node * diff_copy = differentiate(diff_func);
-    simplifyTree(&diff_copy);
-    TREE_DUMP_OPTIONAL(diff_copy, "after double differentiation");
-    printIn(diff_copy);
-    printf("\n");
-
-    nodeDtor(diff_copy);
-    free(diff_copy);
-
-*/
-            
-    TREE_DUMP_OPTIONAL(diff_func, "after differentiation");
-    printIn(diff_func);
-    printf("\n");
-
-    nodeDtor(&diff_func);
+    
+    processSelectedMode(result, v_arr);
+    
     nodeDtor(&result);
     textDtor(&text1);
+    varArrayDtor(v_arr);
 
-    // openPDF();
+    openPDF();
 
     closeLogs();
 
-    varArrayDtor(v_arr);
-    
     return 0;
 }

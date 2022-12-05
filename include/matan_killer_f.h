@@ -12,6 +12,16 @@ enum OPERATION_PRIORITIES
     ADD_SUB_OP = 4,
 };
 
+enum modes
+{
+    DIFF                = 1,
+    DIFF_PARTIALY       = 2,
+    COMPUTE_IN_POINT    = 3,
+    ARRANGE_IN_A_ROW    = 4,
+    SIMPLIFY            = 5,
+    QUIT                = 6,
+};
+
 const int MAX_OPER_LEN = 10;
 const int MAX_FUNC_NUMBER = 30; 
 const int MAGIC_NUMBER_THAT_STANDS_FOR_ARITHM = -1;
@@ -29,6 +39,7 @@ Lex_sub * getLexicalSubstitusions();
 
 char * replaceFuncNames(const char * input);
 
+
 son equalsZero(Exp_node *node);
 son equalsOne(Exp_node *node);
 
@@ -37,13 +48,16 @@ bool hasNumSons(Exp_node *node);
 
 int hasVariable(const Exp_node *node);
 
-int getExpression(Text_info *text, Exp_node *main_node);
+int processSelectedMode(Exp_node * initial_tree, Var v_arr []);
 
+int getExpression(Text_info *text, Exp_node *main_node);
 int readExpression(Exp_node *exp_node, const char * remainder, size_t shift, int free_port);
 
 int parseTerminalNode(Exp_node *exp_node, const char * parsing_start, size_t parsing_length);
 
-Exp_node * differentiate_n_times(Exp_node **exp_node, size_t number);
+int writeInColor(const char * sentence, char color);
+
+Exp_node * differentiate_n_times(const Exp_node *node, size_t * number);
 
 Exp_node * differentiate(const Exp_node *exp_node);
 Exp_node * differentiatePartialy(const Exp_node *node, Var v_arr[]);

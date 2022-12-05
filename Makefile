@@ -8,7 +8,7 @@ LIB_DIR  := ./lib/
 SRC_STK  := ./lib/stack/src/
 READ_DIR := ./lib/calc/
 
-SOURCES 	:= $(SRC_DIR)matan_killer.cpp $(SRC_DIR)matan_killer_debug.cpp $(SRC_DIR)matan_killer_f.cpp $(LIB_DIR)tree_funcs.cpp  $(LIB_DIR)text_funcs.cpp $(READ_DIR)calc_f.cpp  #$(SRC_STK)stack_funcs.cpp $(SRC_STK)debug_funcs.cpp 
+SOURCES 	:= $(SRC_DIR)matan_killer.cpp $(SRC_DIR)matan_killer_debug.cpp $(SRC_DIR)matan_killer_f.cpp $(SRC_DIR)matan_killer_modes.cpp $(LIB_DIR)tree_funcs.cpp  $(LIB_DIR)text_funcs.cpp $(READ_DIR)calc_f.cpp  #$(SRC_STK)stack_funcs.cpp $(SRC_STK)debug_funcs.cpp 
 EXECUTABLE  := matan_killer
 
 all:

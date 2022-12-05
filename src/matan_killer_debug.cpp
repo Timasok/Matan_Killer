@@ -172,9 +172,9 @@ static int oper(const Exp_node * node)
                 
                 "        <tr>\n"
                 
-                "            <td bgcolor = \"#70de9f\" port = \"L%d\">  LEFT = %p </td>\n"
+                "            <td bgcolor = \"#70de9f\" port = \"P%d\">  LEFT = %p </td>\n"
                 
-                "            <td bgcolor = \"#e02828\" port = \"R%d\"> RIGHT = %p </td>\n"
+                "            <td bgcolor = \"#e02828\" port = \"P%d\"> RIGHT = %p </td>\n"
                 
                 "        </tr> \n"
                 
@@ -191,8 +191,8 @@ static int oper(const Exp_node * node)
     // const char output_port = 0;
     // if ()
 
-    if (prevNumber != 0)
-        PRINT_DOT("node%d -> node%d:H%d;", prevNumber, nodeNumber, nodeNumber);
+    if (prevNumber != 0 && nodeNumber != 0)
+        PRINT_DOT("node%d:P%d -> node%d:H%d;", prevNumber, prevNumber, nodeNumber, nodeNumber);
 
     
     return 0;
