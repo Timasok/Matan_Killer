@@ -25,9 +25,9 @@ int closeLogs();
 int getDumpNumber();
 
 int findNext(const Exp_node* node, int (*oper)(const Node *));
-int makeDot(Exp_node * exp_node);
+int makeDot(const Exp_node * exp_node);
 
-int treeDump(Exp_node *node, const char * operation_info, const char *name_of_file, const char *name_of_func, int number_of_line);
+int treeDump(const Exp_node *node, const char * operation_info, const char *name_of_file, const char *name_of_func, int number_of_line);
 
 int printInOrderTex(const Exp_node * node);
 

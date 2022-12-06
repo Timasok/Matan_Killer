@@ -198,7 +198,7 @@ static int oper(const Exp_node * node)
     return 0;
 }
 
-int makeDot(Exp_node *exp_node)
+int makeDot(const Exp_node *exp_node)
 {
     GRAPH_LOG = fopen("graph_log.html", "w");
     
@@ -258,7 +258,7 @@ int printIntroInTex()
     return 0;
 }
 
-int treeDump(Exp_node *node , const char * operation_info, const char *name_of_file, const char *name_of_func, int number_of_line)
+int treeDump(const Exp_node *node , const char * operation_info, const char *name_of_file, const char *name_of_func, int number_of_line)
 {
     // graphDumpDot(list);
     nodeNumber = 0;

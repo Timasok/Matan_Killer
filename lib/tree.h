@@ -51,7 +51,6 @@ enum Operator
   
 #undef DEF_OP
 
-
 typedef struct Var_t
 {
     char *name;
